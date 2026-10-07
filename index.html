@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cổng Điều Phối Hành Chính & Xe YDS</title>
+  <!-- Bootstrap 5 CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #003366;
+      --secondary-color: #f4f6f9;
+      --accent-color: #ff9900;
+    }
+    body {
+      background-color: var(--secondary-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #333;
+    }
+    .header-bar {
+      background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.15);
+    }
+    .nav-pills .nav-link {
+      font-weight: 600;
+      color: #555;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: all 0.2s ease-in-out;
+    }
+    .nav-pills .nav-link.active {
+      background-color: var(--primary-color);
+      color: #fff;
+      box-shadow: 0 3px 8px rgba(0, 51, 102, 0.25);
+    }
+    .card-custom {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      background: #fff;
+    }
+    .card-header-custom {
+      background-color: #fff;
+      border-bottom: 2px solid #edf2f7;
+      padding: 1rem 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      border-top-left-radius: 12px !important;
+      border-top-right-radius: 12px !important;
+    }
+    .kpi-card {
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.2s;
+    }
+    .kpi-card:hover {
+      transform: translateY(-2px);
+    }
+    .auth-badge {
+      background: #e6fffa;
+      color: #234e52;
+      border: 1px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="py-3">
+
+<div class="container" style="max-width: 950px;">
+  <!-- HEADER -->
+  <div class="header-bar d-flex align-items-center justify-content-between">
+    <div>
+      <h4 class="mb-1 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>CỔNG ĐIỀU PHỐI HÀNH CHÍNH & XE YDS</h4>
+      <div class="small text-white-50">Xác thực Mã PIN nội bộ • Đặt lịch mới • Điều chỉnh lịch • Báo cáo hiệu quả</div>
+    </div>
+    <span class="badge bg-light text-dark px-3 py-2 fw-bold"><i class="bi bi-lock-fill text-warning me-1"></i>Bảo mật Mã PIN</span>
+  </div>
+
+  <!-- NAVIGATION TABS -->
+  <ul class="nav nav-pills nav-fill bg-white p-2 rounded-3 shadow-sm mb-4" id="mainTab" role="tablist">
+    <li class="nav-item">
+      <button class="nav-link active" id="tab-create-btn" data-bs-toggle="pill" data-bs-target="#tab-create" type="button">
+        <i class="bi bi-calendar-plus me-1"></i> 1. Đặt Lịch Mới
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tab-edit-btn" data-bs-toggle="pill" data-bs-target="#tab-edit" type="button">
+        <i class="bi bi-phone me-1"></i> 2. Tra Cứu & Sửa Lịch (PIN)
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="tab-report-btn" data-bs-toggle="pill" data-bs-target="#tab-report" type="button" onclick="loadAnalytics()">
+        <i class="bi bi-graph-up-arrow me-1"></i> 3. Báo Cáo Hiệu Hiệu Quả
+      </button>
+    </li>
+  </ul>
+
+  <!-- TAB CONTENT -->
+  <div class="tab-content" id="mainTabContent">
+
+    <!-- TAB 1: FORM TẠO MỚI ORDER -->
+    <div class="tab-pane fade show active" id="tab-create">
+      <div class="card card-custom">
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-pencil-square me-2"></i>Thông tin đăng ký lịch xe / hành chính</span>
+          <span class="badge bg-danger text-white small">* Thông tin bắt buộc</span>
+        </div>
+        <div class="card-body p-4">
+          <form id="formCreateOrder" onsubmit="handleCreateOrder(event)">
+            <div class="row g-3">
+              
+              <!-- KHỐI ĐỊNH DANH BẰNG SĐT & TÊN TỰ ĐỘNG LOAD -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Chọn Số điện thoại nhân viên <span class="text-danger">*</span></label>
+                <select class="form-select border-primary fw-bold" name="phone" id="createPhone" required onchange="onPhoneSelectChange('create')">
+                  <option value="">-- Chọn SĐT trong danh bạ YDS --</option>
+                </select>
+                <div class="form-text text-muted small">Tên và phòng ban sẽ được hệ thống tự động điền.</div>
+              </div>
+
+              <!-- MÃ PIN BẮT BUỘC -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-danger"><i class="bi bi-key-fill me-1"></i>Mã PIN xác thực (4 số) <span class="text-danger">*</span></label>
+                <input type="password" class="form-control border-danger fw-bold" name="pin" id="createPin" required 
+                       placeholder="Nhập 4 số PIN được cấp..." maxlength="4" pattern="[0-9]{4}">
+                <div class="form-text text-danger small">* Khớp đúng mã PIN mới được phép gửi đơn.</div>
+              </div>
+
+              <!-- TÊN VÀ PHÒNG BAN HIỆN TỰ ĐỘNG -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Họ và tên nhân sự (Tự động)</label>
+                <input type="text" class="form-control bg-light fw-bold" name="fullName" id="createFullName" readonly placeholder="Chọn SĐT để tải tên...">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Phòng ban (Tự động)</label>
+                <input type="text" class="form-control bg-light fw-bold" name="department" id="createDept" readonly placeholder="Chọn SĐT để tải phòng ban...">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Loại yêu cầu <span class="text-danger">*</span></label>
+                <select class="form-select" name="requestType" required>
+                  <option value="Giao Nhan Hang Hoa">Giao nhận hàng hóa</option>
+                  <option value="Dua Don Nhan Su">Đưa đón nhân sự</option>
+                  <option value="Yeu Cau Nhan Su Ho Tro">Yêu cầu nhân sự hỗ trợ</option>
+                  <option value="Khac">Khác</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Ngày khởi hành / Thực hiện <span class="text-danger">*</span></label>
+                <input type="date" class="form-control border-primary fw-bold" name="requestDate" id="createReqDate" required>
+                <div class="form-text text-muted small">Hệ thống chặn không cho đặt lịch lùi về quá khứ.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Thời gian bắt đầu</label>
+                <select class="form-select" name="startTime">
+                  <option value="Linh hoạt trong buổi sáng">Linh hoạt trong buổi sáng</option>
+                  <option value="Linh hoạt trong buổi chiều">Linh hoạt trong buổi chiều</option>
+                  <option value="Đúng giờ: 08:00">Đúng giờ: 08:00</option>
+                  <option value="Đúng giờ: 13:30">Đúng giờ: 13:30</option>
+                  <option value="Đúng giờ: 17:00">Đúng giờ: 17:00</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Phương tiện đề xuất</label>
+                <select class="form-select" name="vehicle">
+                  <option value="Xe Ranger">Xe Ranger (Bán tải)</option>
+                  <option value="Có dùng xe (linh hoạt)">Có dùng xe (Linh hoạt)</option>
+                  <option value="Không sử dụng xe ô tô">Không sử dụng xe ô tô</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Điểm xuất phát <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="startLoc" value="VPO" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Điểm kết thúc <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="endLoc" value="HNO" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Thời gian ước tính hoàn thành</label>
+                <select class="form-select" name="duration">
+                  <option value="Nhanh: dưới 2h">Nhanh: dưới 2h</option>
+                  <option value="Trung bình: từ 2h-4h">Trung bình: từ 2h - 4h</option>
+                  <option value="Dài: trên 4h">Dài: trên 4h</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Ghi chú bổ sung</label>
+                <input type="text" class="form-control" name="note" placeholder="Thông tin liên hệ phụ trách điểm đến, yêu cầu gấp...">
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-bold">Nội dung công việc / Mô tả hàng hóa</label>
+                <textarea class="form-control" name="content" rows="2" placeholder="Chi tiết số lượng kiện hàng, trọng tải hoặc ghi chú nhân sự đi cùng..."></textarea>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-2 border-top text-end">
+              <button type="submit" class="btn btn-primary px-4 fw-bold" id="btnSubmitCreate">
+                <i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: TRA CỨU & SỬA LỊCH (BẮT BUỘC SĐT + MÃ PIN) -->
+    <div class="tab-pane fade" id="tab-edit">
+      <div class="card card-custom mb-3">
+        <div class="card-header-custom"><i class="bi bi-shield-check me-2"></i>Xác thực SĐT & Mã PIN để sửa lịch</div>
+        <div class="card-body p-4">
+          <div class="row align-items-center g-3">
+            <div class="col-md-5">
+              <label class="form-label fw-bold small">Số điện thoại</label>
+              <select class="form-select border-primary fw-bold" id="searchPhone" onchange="onPhoneSelectChange('search')">
+                <option value="">-- Chọn SĐT trong danh bạ YDS --</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small text-danger">Mã PIN xác thực (4 số)</label>
+              <input type="password" class="form-control border-danger fw-bold" id="searchPin" 
+                     placeholder="Nhập 4 số PIN..." maxlength="4" pattern="[0-9]{4}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button class="btn btn-primary w-100 fw-bold py-2" onclick="searchOrders()">
+                <i class="bi bi-unlock-fill me-1"></i> Mở Lịch Sửa
+              </button>
+            </div>
+          </div>
+          
+          <div class="alert alert-warning py-2 mt-3 mb-0 small border-warning">
+            <div class="fw-bold mb-1"><i class="bi bi-shield-exclamation me-1"></i> Quy chế bảo mật & kiểm soát sửa lịch:</div>
+            <ul class="mb-0 ps-3">
+              <li>Chỉ nhân sự <strong>nhập đúng Mã PIN</strong> mới được phép xem và điều chỉnh đơn của mình.</li>
+              <li><strong>Trong ngày:</strong> Khóa không cho sửa nếu giờ khởi hành đã qua giờ hiện tại.</li>
+              <li><strong>Sau 17h00:</strong> Sửa đơn ngày mai sẽ gắn trạng thái <code>Pending (Chờ duyệt sau 17h)</code>.</li>
+              <li><strong>Bắt buộc:</strong> Phải nhập đầy đủ <u>Lý do giải trình</u>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danh sách order hợp lệ -->
+      <div id="orderListArea" style="display:none;" class="mb-3">
+        <div class="card card-custom">
+          <div class="card-header-custom bg-light d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-list-check me-2"></i>Đơn hợp lệ có thể chỉnh sửa:</span>
+            <span class="badge bg-primary" id="foundCount">0 đơn</span>
+          </div>
+          <div class="card-body p-3">
+            <div id="orderList" class="list-group"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form chỉnh sửa -->
+      <div id="editFormArea" style="display:none;" class="card card-custom border border-warning">
+        <div class="card-header-custom bg-warning bg-opacity-10 text-dark d-flex justify-content-between align-items-center">
+          <span class="fw-bold"><i class="bi bi-pencil-fill text-warning me-2"></i>Chỉnh sửa đơn: <span id="lblEditOrderId" class="text-primary"></span></span>
+          <button type="button" class="btn-close" onclick="cancelEdit()"></button>
+        </div>
+        <div class="card-body p-4">
+          <form id="formEditOrder" onsubmit="handleUpdateOrder(event)">
+            <input type="hidden" name="rowIndex" id="editRowIndex">
+            <input type="hidden" name="phone" id="editPhone">
+            <input type="hidden" name="pin" id="editPin">
+            
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Họ và tên nhân sự</label>
+                <input type="text" class="form-control bg-light fw-bold" name="fullName" id="editFullName" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Phòng ban</label>
+                <input type="text" class="form-control bg-light fw-bold" name="department" id="editDept" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Ngày khởi hành MỚI <span class="text-danger">*</span></label>
+                <input type="date" class="form-control border-warning fw-bold" name="requestDate" id="editReqDate" required onchange="checkCutoffNotice()">
+                <div id="cutoffNotice" class="small mt-1 fw-bold text-danger" style="display:none;"></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Thời gian bắt đầu</label>
+                <select class="form-select border-warning fw-bold" name="startTime" id="editStartTime" required>
+                  <option value="Linh hoạt trong buổi sáng">Linh hoạt trong buổi sáng</option>
+                  <option value="Linh hoạt trong buổi chiều">Linh hoạt trong buổi chiều</option>
+                  <option value="Đúng giờ: 08:00">Đúng giờ: 08:00</option>
+                  <option value="Đúng giờ: 13:30">Đúng giờ: 13:30</option>
+                  <option value="Đúng giờ: 17:00">Đúng giờ: 17:00</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Điểm xuất phát</label>
+                <input type="text" class="form-control" name="startLoc" id="editStartLoc" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Điểm kết thúc</label>
+                <input type="text" class="form-control" name="endLoc" id="editEndLoc" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-bold text-danger">Lý do giải trình sửa lịch <span class="text-danger">*</span></label>
+                <textarea class="form-control border-danger" name="note" id="editNote" rows="2" required 
+                          placeholder="Bắt buộc nêu rõ lý do xin dời lịch, thay đổi nhân sự hoặc tuyến đường..."></textarea>
+                <div class="form-text text-danger small">* Chị Tina & Ban Quản trị yêu cầu giải trình minh bạch cho mọi đơn điều chỉnh.</div>
+              </div>
+            </div>
+            <div class="mt-4 pt-2 border-top text-end">
+              <button type="button" class="btn btn-secondary me-2" onclick="cancelEdit()">Đóng</button>
+              <button type="submit" class="btn btn-warning px-4 fw-bold" id="btnSubmitEdit">
+                <i class="bi bi-check-circle-fill me-1"></i> Lưu Cập Nhật
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: BÁO CÁO HIỆU HIỆU QUẢ THEO KỲ -->
+    <div class="tab-pane fade" id="tab-report">
+      <div class="card card-custom">
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-bar-chart-fill me-2"></i>Báo Cáo Hiệu Quả & Tiến Độ Điều Phối</span>
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-primary active" onclick="changeRange('week', this)">Tuần</button>
+            <button type="button" class="btn btn-outline-primary" onclick="changeRange('month', this)">Tháng</button>
+            <button type="button" class="btn btn-outline-primary" onclick="changeRange('quarter', this)">Quý</button>
+            <button type="button" class="btn btn-outline-primary" onclick="changeRange('year', this)">Năm</button>
+            <button type="button" class="btn btn-outline-primary" onclick="changeRange('all', this)">Tất cả</button>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-3 mb-4 text-center">
+            <div class="col-6 col-md-3">
+              <div class="kpi-card border-primary">
+                <div class="text-muted small fw-bold">TỔNG ĐƠN ĐẶT</div>
+                <div class="fs-2 fw-bold text-primary" id="kpiTotal">0</div>
+                <div class="small text-muted">Đơn hợp lệ</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi-card border-success">
+                <div class="text-muted small fw-bold">XE RANGER BÁN TẢI</div>
+                <div class="fs-2 fw-bold text-success" id="kpiRanger">0</div>
+                <div class="small text-muted">Chuyến xe tải</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi-card border-warning">
+                <div class="text-muted small fw-bold">CHỜ DUYỆT (PENDING)</div>
+                <div class="fs-2 fw-bold text-warning" id="kpiPending">0</div>
+                <div class="small text-muted">Sửa sau 17h00</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi-card border-secondary">
+                <div class="text-muted small fw-bold">KHÔNG DÙNG XE</div>
+                <div class="fs-2 fw-bold text-secondary" id="kpiNoVeh">0</div>
+                <div class="small text-muted">Hỗ trợ tại chỗ</div>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-diagram-3 me-2"></i>Phân bổ nhu cầu theo Phòng Ban:</h6>
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>Phòng ban</th>
+                  <th class="text-center" style="width: 140px;">Số lượt order</th>
+                  <th class="text-center" style="width: 140px;">Tỷ trọng (%)</th>
+                </tr>
+              </thead>
+              <tbody id="tblDeptBody">
+                <tr><td colspan="3" class="text-center text-muted">Đang tải dữ liệu...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const SCRIPT_URL = ""; 
+
+  // DANH SÁCH NHÂN SỰ & MÃ PIN KHỞI TẠO (TRÍCH XUẤT TỪ FILE EXCEL YDS)
+  const LOCAL_EMPLOYEES = {
+    "0865195665": { name: "Ms.Trâm", dept: "Hanh Chinh" },
+    "0962194446": { name: "Ms.Phương", dept: "Ke Toan" },
+    "0976996676": { name: "Ms.Hậu", dept: "Mua Hang" },
+    "0862428568": { name: "Ms.Huyền", dept: "Ke Toan" },
+    "0335184186": { name: "Mr.Nam", dept: "Hanh Chinh" },
+    "0862310486": { name: "Ms.Loan", dept: "Kinh Doanh" },
+    "0985456848": { name: "Ms.Tina", dept: "Hanh Chinh" },
+    "0337151186": { name: "Mr.Đức Anh", dept: "Kho Van" },
+    "0862357086": { name: "Ms.Mai", dept: "Hanh Chinh" },
+    "0865765665": { name: "Mr.Toàn", dept: "Mua Hang" },
+    "0962698597": { name: "Ms.Châm", dept: "Mua Hang" },
+    "0914676229": { name: "Mr.Minh Anh", dept: "Kinh Doanh" }
+  };
+
+  let currentRange = 'week';
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  document.getElementById('createReqDate').min = todayStr;
+  document.getElementById('createReqDate').value = todayStr;
+  document.getElementById('editReqDate').min = todayStr;
+
+  // Khởi tạo nạp danh bạ vào 2 thẻ Select
+  function populateEmployeeDropdowns() {
+    const selCreate = document.getElementById('createPhone');
+    const selSearch = document.getElementById('searchPhone');
+    
+    for (const [phone, info] of Object.entries(LOCAL_EMPLOYEES)) {
+      const opt1 = document.createElement('option');
+      opt1.value = phone;
+      opt1.text = `${phone} - ${info.name} (${info.dept})`;
+      selCreate.appendChild(opt1);
+
+      const opt2 = document.createElement('option');
+      opt2.value = phone;
+      opt2.text = `${phone} - ${info.name} (${info.dept})`;
+      selSearch.appendChild(opt2);
+    }
+  }
+  populateEmployeeDropdowns();
+
+  function onPhoneSelectChange(type) {
+    if (type === 'create') {
+      const phone = document.getElementById('createPhone').value;
+      const emp = LOCAL_EMPLOYEES[phone];
+      if (emp) {
+        document.getElementById('createFullName').value = emp.name;
+        document.getElementById('createDept').value = emp.dept;
+      } else {
+        document.getElementById('createFullName').value = "";
+        document.getElementById('createDept').value = "";
+      }
+    }
+  }
+
+  // 1. TẠO ĐƠN MỚI
+  function handleCreateOrder(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitCreate');
+    const formData = Object.fromEntries(new FormData(e.target));
+
+    if (!formData.pin || formData.pin.length !== 4) {
+      alert("Vui lòng nhập đúng mã PIN gồm 4 chữ số!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & gửi...';
+
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(res => {
+          alert(`Tạo đơn thành công cho ${res.name}!\nMã Order: ${res.orderId}`);
+          e.target.reset();
+          document.getElementById('createReqDate').value = todayStr;
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+        })
+        .withFailureHandler(err => {
+          alert("Lỗi: " + err.message);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+        })
+        .createOrder(formData);
+    } else if (SCRIPT_URL) {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "createOrder", data: formData })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert(`Tạo đơn thành công cho ${res.name}!\nMã Order: ${res.orderId}`);
+          e.target.reset();
+          document.getElementById('createReqDate').value = todayStr;
+        } else {
+          alert("Lỗi: " + (res.error || "Không thể tạo đơn"));
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+      })
+      .catch(err => {
+        alert("Lỗi kết nối: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+      });
+    } else {
+      alert("Chưa cấu hình SCRIPT_URL kết nối Google Apps Script.");
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+    }
+  }
+
+  // 2. TÌM KIẾM THEO SĐT + MÃ PIN
+  function searchOrders() {
+    const phone = document.getElementById('searchPhone').value.trim();
+    const pin = document.getElementById('searchPin').value.trim();
+
+    if (!phone) {
+      alert("Vui lòng chọn số điện thoại.");
+      return;
+    }
+    if (!pin || pin.length !== 4) {
+      alert("Vui lòng nhập đúng mã PIN xác thực 4 số.");
+      return;
+    }
+
+    const area = document.getElementById('orderListArea');
+    const list = document.getElementById('orderList');
+    list.innerHTML = '<div class="text-center p-3"><span class="spinner-border text-primary"></span> Đang xác thực PIN & kiểm tra lịch...</div>';
+    area.style.display = 'block';
+    document.getElementById('editFormArea').style.display = 'none';
+
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(orders => renderOrders(orders, phone, pin))
+        .withFailureHandler(err => {
+          alert("Lỗi xác thực: " + err.message);
+          area.style.display = 'none';
+        })
+        .getEditableOrders(phone); // Hàm backend sẽ kiểm tra PIN
+    } else if (SCRIPT_URL) {
+      fetch(`${SCRIPT_URL}?action=getEditableOrders&phone=${encodeURIComponent(phone)}&pin=${encodeURIComponent(pin)}`)
+        .then(res => res.json())
+        .then(res => {
+          if (res.error) throw new Error(res.error);
+          renderOrders(res, phone, pin);
+        })
+        .catch(err => {
+          alert("Lỗi xác thực: " + err.message);
+          area.style.display = 'none';
+        });
+    }
+  }
+
+  function renderOrders(orders, phone, pin) {
+    const list = document.getElementById('orderList');
+    list.innerHTML = "";
+    document.getElementById('foundCount').innerText = (orders ? orders.length : 0) + " đơn";
+
+    if (!orders || orders.length === 0) {
+      list.innerHTML = '<div class="alert alert-info mb-0"><i class="bi bi-info-circle me-1"></i> Không tìm thấy đơn nào còn hiệu lực chỉnh sửa cho nhân sự này.</div>';
+      return;
+    }
+
+    orders.forEach(ord => {
+      const item = document.createElement('div');
+      item.className = "list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3";
+      item.innerHTML = `
+        <div>
+          <div class="fw-bold text-primary fs-6">${ord.orderId}</div>
+          <div class="small"><strong>Khởi hành:</strong> <span class="badge bg-success">${ord.requestDateDisplay || ord.requestDate}</span> - <span class="fw-bold text-dark">${ord.startTime || 'Linh hoạt'}</span></div>
+          <div class="small text-muted text-truncate" style="max-width: 450px;"><strong>Nội dung:</strong> ${ord.content || 'Không ghi'}</div>
+        </div>
+        <button class="btn btn-warning btn-sm fw-bold px-3" onclick='openEditForm(${JSON.stringify(ord)}, "${phone}", "${pin}")'>
+          <i class="bi bi-pencil-fill me-1"></i> Sửa Lịch
+        </button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function openEditForm(ord, phone, pin) {
+    document.getElementById('editFormArea').style.display = "block";
+    document.getElementById('lblEditOrderId').innerText = ord.orderId;
+    document.getElementById('editRowIndex').value = ord.rowIndex;
+    document.getElementById('editPhone').value = phone;
+    document.getElementById('editPin').value = pin;
+    document.getElementById('editFullName').value = ord.fullName;
+    document.getElementById('editDept').value = ord.department;
+    document.getElementById('editReqDate').value = ord.requestDate;
+    document.getElementById('editStartTime').value = ord.startTime || "Linh hoạt trong buổi sáng";
+    document.getElementById('editStartLoc').value = ord.startLoc;
+    document.getElementById('editEndLoc').value = ord.endLoc;
+    document.getElementById('editNote').value = "";
+    
+    checkCutoffNotice();
+    document.getElementById('editFormArea').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function cancelEdit() {
+    document.getElementById('editFormArea').style.display = "none";
+  }
+
+  function checkCutoffNotice() {
+    const selectedDate = document.getElementById('editReqDate').value;
+    const noticeDiv = document.getElementById('cutoffNotice');
+    if (!selectedDate) return;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const sel = new Date(selectedDate);
+    const selDateOnly = new Date(sel.getFullYear(), sel.getMonth(), sel.getDate());
+
+    if (selDateOnly.getTime() === tomorrow.getTime() && now.getHours() >= 17) {
+      noticeDiv.style.display = "block";
+      noticeDiv.innerHTML = '<i class="bi bi-exclamation-octagon-fill me-1"></i> CẢNH BÁO: Hiện tại đã sau 17h00. Sửa lịch cho ngày mai sẽ ở trạng thái <u>Pending chờ duyệt</u>!';
+    } else {
+      noticeDiv.style.display = "none";
+    }
+  }
+
+  function handleUpdateOrder(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSubmitEdit');
+    const data = Object.fromEntries(new FormData(e.target));
+
+    if (!data.note || !data.note.trim()) {
+      alert("Bắt buộc phải nhập lý do giải trình khi điều chỉnh lịch!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & lưu...';
+
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(res => {
+          alert(`Cập nhật thành công!\nTrạng thái đơn: ${res.status}`);
+          document.getElementById('editFormArea').style.display = "none";
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Lưu Cập Nhật';
+          searchOrders();
+        })
+        .withFailureHandler(err => {
+          alert("Lỗi: " + err.message);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Lưu Cập Nhật';
+        })
+        .updateOrder(data);
+    } else if (SCRIPT_URL) {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "updateOrder", data: data })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert(`Cập nhật thành công!\nTrạng thái đơn: ${res.status}`);
+          document.getElementById('editFormArea').style.display = "none";
+          searchOrders();
+        } else {
+          alert("Lỗi: " + res.error);
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Lưu Cập Nhật';
+      })
+      .catch(err => {
+        alert("Lỗi kết nối: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Lưu Cập Nhật';
+      });
+    }
+  }
+
+  function changeRange(range, btn) {
+    currentRange = range;
+    document.querySelectorAll('#tab-report .btn-group button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadAnalytics();
+  }
+
+  function loadAnalytics() {
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(renderAnalytics)
+        .getReportAnalytics(currentRange);
+    } else if (SCRIPT_URL) {
+      fetch(`${SCRIPT_URL}?action=getReportAnalytics&timeRange=${currentRange}`)
+        .then(res => res.json())
+        .then(renderAnalytics)
+        .catch(err => console.error(err));
+    }
+  }
+
+  function renderAnalytics(data) {
+    document.getElementById('kpiTotal').innerText = data.totalOrders || 0;
+    document.getElementById('kpiRanger').innerText = (data.vehicleStats && data.vehicleStats["Xe Ranger"]) || 0;
+    document.getElementById('kpiPending').innerText = (data.statusStats && (data.statusStats["Pending (Chờ duyệt sau 17h)"] || data.statusStats["Chờ xử lý"])) || 0;
+    document.getElementById('kpiNoVeh').innerText = (data.vehicleStats && data.vehicleStats["Không dùng xe"]) || 0;
+
+    const tbody = document.getElementById('tblDeptBody');
+    tbody.innerHTML = "";
+    const depts = data.deptStats || {};
+    const total = data.totalOrders || 1;
+
+    for (const [dept, count] of Object.entries(depts)) {
+      const pct = ((count / total) * 100).toFixed(1);
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${dept}</strong></td>
+          <td class="text-center fw-bold">${count}</td>
+          <td class="text-center text-primary">${pct}%</td>
+        </tr>
+      `;
+    }
+  }
+</script>
+</body>
+</html>
