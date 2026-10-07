@@ -88,13 +88,21 @@
 
 <div class="container" style="max-width: 1000px;">
   <!-- HEADER -->
-  <div class="header-bar d-flex align-items-center justify-content-between">
+  <div class="header-bar d-flex align-items-center justify-content-between flex-wrap gap-2">
     <div>
       <h4 class="mb-1 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>CỔNG ĐIỀU PHỐI HÀNH CHÍNH & XE YDS</h4>
       <div class="small text-white-50">Đặt lịch mới • Sửa lịch • Phê duyệt Tina Gatekeeper • Lịch xe đã duyệt</div>
     </div>
-    <span class="badge bg-light text-dark px-3 py-2 fw-bold"><i class="bi bi-shield-check text-success me-1"></i>Hệ thống Realtime</span>
+    <div class="d-flex align-items-center gap-2">
+      <button id="btnReprocessSystem" class="btn btn-warning fw-bold text-dark shadow-sm px-3 py-2" onclick="triggerReprocessSystem()" title="Kích hoạt cập nhật quy trình điều phối & xuất file orders_latest.csv ngay lập tức">
+        <i class="bi bi-arrow-repeat me-1"></i> ⚡ Cập Nhật / Chạy Lại Quy Trình
+      </button>
+      <span class="badge bg-light text-dark px-3 py-2 fw-bold"><i class="bi bi-shield-check text-success me-1"></i>Realtime</span>
+    </div>
   </div>
+
+  <!-- BANNER THÔNG BÁO TRẠNG THÁI CẬP NHẬT REALTIME -->
+  <div id="reprocessStatusNotice" class="alert alert-success alert-dismissible fade show shadow-sm mb-3" style="display:none;" role="alert"></div>
 
   <!-- NAVIGATION TABS -->
   <ul class="nav nav-pills nav-fill bg-white p-2 rounded-3 shadow-sm mb-4" id="mainTab" role="tablist">
@@ -354,6 +362,7 @@
             <button class="btn btn-outline-primary btn-sm fw-bold" onclick="setDriverDate('today')">Hôm nay</button>
             <button class="btn btn-outline-primary btn-sm fw-bold" onclick="setDriverDate('tomorrow')">Ngày mai</button>
             <input type="date" class="form-control form-control-sm border-primary fw-bold" id="driverDatePicker" onchange="loadDriverSchedule()">
+            <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="triggerReprocessSystem()" title="Kích hoạt cập nhật quy trình & làm mới"><i class="bi bi-arrow-repeat me-1"></i> Cập nhật</button>
           </div>
         </div>
         <div class="card-body p-4">
@@ -399,9 +408,12 @@
 
           <!-- BẢNG DANH SÁCH LỆNH PENDING CHỜ TINA DUYỆT -->
           <div id="tinaPendingArea" style="display:none;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
               <h6 class="fw-bold text-dark mb-0"><i class="bi bi-list-task me-1"></i>Danh sách lệnh Pending & Xung đột quy tắc:</h6>
-              <button class="btn btn-outline-secondary btn-sm fw-bold" onclick="loadTinaPendingOrders()"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
+              <div class="d-flex gap-2">
+                <button class="btn btn-warning btn-sm fw-bold text-dark" onclick="triggerReprocessSystem()" title="Chạy lại quy trình đối soát xung đột"><i class="bi bi-arrow-repeat me-1"></i>Chạy lại quy trình</button>
+                <button class="btn btn-outline-secondary btn-sm fw-bold" onclick="loadTinaPendingOrders()"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
+              </div>
             </div>
             <div id="tinaPendingList"></div>
           </div>
@@ -1019,6 +1031,114 @@
           <td class="text-center text-primary">${pct}%</td>
         </tr>
       `;
+    }
+  }
+
+  // 6. CẬP NHẬT & CHẠY LẠI QUY TRÌNH HỆ THỐNG NGAY LẬP TỨC
+  function triggerReprocessSystem() {
+    const btn = document.getElementById('btnReprocessSystem');
+    const originalHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Đang đồng bộ...';
+    }
+
+    function showReprocessAlert(isSuccess, title, msg) {
+      const alertDiv = document.getElementById('reprocessStatusNotice');
+      if (alertDiv) {
+        alertDiv.className = `alert alert-${isSuccess ? 'success' : 'danger'} alert-dismissible fade show shadow-sm mb-3`;
+        alertDiv.innerHTML = `
+          <div class="d-flex align-items-center">
+            <i class="bi bi-${isSuccess ? 'check-circle-fill' : 'exclamation-triangle-fill'} fs-4 me-2"></i>
+            <div>
+              <strong class="fs-6">${title}</strong><br>
+              <span class="small">${msg.replace(/\n/g, '<br>')}</span>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertDiv.style.display = 'block';
+        setTimeout(() => {
+          alertDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      } else {
+        alert(`${title}\n\n${msg}`);
+      }
+    }
+
+    function handleSuccess(res) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+      const stats = res.stats || {};
+      const textMsg = `• Thời gian: ${res.timestamp || new Date().toLocaleTimeString()}\n` +
+        `• Tổng số đơn: ${stats.total || 0}\n` +
+        `• Đã duyệt (Bác tài Nam nhận lệnh): ${stats.approved || 0}\n` +
+        `• Chờ duyệt / Xung đột (Chị Tina xem xét): ${stats.pending || 0}\n` +
+        `• Trạng thái CSV: Đã xuất orders_latest.csv lên Google Drive kích hoạt Engine AI máy tính.`;
+
+      showReprocessAlert(true, "⚡ CẬP NHẬT & CHẠY LẠI QUY TRÌNH THÀNH CÔNG!", textMsg);
+      refreshCurrentActiveTab();
+    }
+
+    function handleError(err) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
+      showReprocessAlert(false, "❌ LỖI CẬP NHẬT QUY TRÌNH", err.message || err.toString());
+    }
+
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(handleSuccess)
+        .withFailureHandler(handleError)
+        .reprocessSystem();
+    } else if (SCRIPT_URL) {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "reprocess" })
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success) handleSuccess(res);
+        else handleError(new Error(res.error || "Không thể cập nhật"));
+      })
+      .catch(postErr => {
+        // Fallback qua GET
+        fetch(`${SCRIPT_URL}?action=reprocess`)
+          .then(r => r.json())
+          .then(res => {
+            if (res.success || !res.error) handleSuccess(res);
+            else handleError(new Error(res.error));
+          })
+          .catch(getErr => handleError(getErr));
+      });
+    }
+  }
+
+  function refreshCurrentActiveTab() {
+    const activeTab = document.querySelector('#mainTab .nav-link.active');
+    if (!activeTab) return;
+    const tabId = activeTab.id;
+
+    if (tabId === 'tab-driver-btn') {
+      loadDriverSchedule();
+    } else if (tabId === 'tab-tina-btn') {
+      const pin = document.getElementById('tinaAuthPin').value.trim();
+      if (pin === "7788") {
+        loadTinaPendingOrders();
+      }
+    } else if (tabId === 'tab-report-btn') {
+      loadAnalytics();
+    } else if (tabId === 'tab-edit-btn') {
+      const searchPhone = document.getElementById('searchPhone').value.trim();
+      const searchPin = document.getElementById('searchPin').value.trim();
+      if (searchPhone.length === 10 && searchPin.length === 4) {
+        searchOrders();
+      }
     }
   }
 </script>
