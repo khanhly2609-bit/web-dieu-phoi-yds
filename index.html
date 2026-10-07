@@ -12,6 +12,7 @@
       --primary-color: #003366;
       --secondary-color: #f4f6f9;
       --accent-color: #ff9900;
+      --tina-color: #7b1fa2;
     }
     body {
       background-color: var(--secondary-color);
@@ -30,13 +31,18 @@
       font-weight: 600;
       color: #555;
       border-radius: 8px;
-      padding: 0.75rem 1rem;
+      padding: 0.75rem 0.6rem;
+      font-size: 0.95rem;
       transition: all 0.2s ease-in-out;
     }
     .nav-pills .nav-link.active {
       background-color: var(--primary-color);
       color: #fff;
       box-shadow: 0 3px 8px rgba(0, 51, 102, 0.25);
+    }
+    .nav-pills .nav-link.tab-tina.active {
+      background-color: var(--tina-color);
+      box-shadow: 0 3px 8px rgba(123, 31, 162, 0.35);
     }
     .card-custom {
       border: none;
@@ -54,7 +60,7 @@
       border-top-right-radius: 12px !important;
     }
     .driver-card {
-      border-left: 5px solid #003366;
+      border-left: 5px solid #28a745;
       border-radius: 8px;
       background: #ffffff;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -62,6 +68,12 @@
     }
     .driver-card:hover {
       transform: translateY(-2px);
+    }
+    .pending-card {
+      border-left: 5px solid #e0a800;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     .kpi-card {
       border-radius: 10px;
@@ -74,12 +86,12 @@
 </head>
 <body class="py-3">
 
-<div class="container" style="max-width: 980px;">
+<div class="container" style="max-width: 1000px;">
   <!-- HEADER -->
   <div class="header-bar d-flex align-items-center justify-content-between">
     <div>
       <h4 class="mb-1 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>CỔNG ĐIỀU PHỐI HÀNH CHÍNH & XE YDS</h4>
-      <div class="small text-white-50">Đặt lịch mới • Sửa lịch • Lịch trình Lái xe hàng ngày • Báo cáo hiệu quả</div>
+      <div class="small text-white-50">Đặt lịch mới • Sửa lịch • Phê duyệt Tina Gatekeeper • Lịch xe đã duyệt</div>
     </div>
     <span class="badge bg-light text-dark px-3 py-2 fw-bold"><i class="bi bi-shield-check text-success me-1"></i>Hệ thống Realtime</span>
   </div>
@@ -93,17 +105,22 @@
     </li>
     <li class="nav-item">
       <button class="nav-link" id="tab-edit-btn" data-bs-toggle="pill" data-bs-target="#tab-edit" type="button">
-        <i class="bi bi-phone me-1"></i> 2. Tra Cứu & Sửa Lịch (PIN)
+        <i class="bi bi-phone me-1"></i> 2. Tra Cứu & Sửa Lịch
       </button>
     </li>
     <li class="nav-item">
       <button class="nav-link" id="tab-driver-btn" data-bs-toggle="pill" data-bs-target="#tab-driver" type="button" onclick="loadDriverSchedule()">
-        <i class="bi bi-truck-front-fill me-1"></i> 3. Lịch Trình Lái Xe
+        <i class="bi bi-truck-front-fill me-1"></i> 3. Lịch Xe (Đã Duyệt)
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link tab-tina" id="tab-tina-btn" data-bs-toggle="pill" data-bs-target="#tab-tina" type="button">
+        <i class="bi bi-person-check-fill me-1"></i> 4. Tina Duyệt Lệnh
       </button>
     </li>
     <li class="nav-item">
       <button class="nav-link" id="tab-report-btn" data-bs-toggle="pill" data-bs-target="#tab-report" type="button" onclick="loadAnalytics()">
-        <i class="bi bi-graph-up-arrow me-1"></i> 4. Báo Cáo Hiệu Quả
+        <i class="bi bi-graph-up-arrow me-1"></i> 5. Báo Cáo KPI
       </button>
     </li>
   </ul>
@@ -251,16 +268,6 @@
               </button>
             </div>
           </div>
-          
-          <div class="alert alert-warning py-2 mt-3 mb-0 small border-warning">
-            <div class="fw-bold mb-1"><i class="bi bi-shield-exclamation me-1"></i> Quy chế kiểm soát sửa lịch theo thời gian thực:</div>
-            <ul class="mb-0 ps-3">
-              <li>Chỉ nhân sự <strong>trùng khớp đúng SĐT và Mã PIN</strong> mới được phép mở danh sách đơn.</li>
-              <li><strong>Trong ngày:</strong> Khóa không cho sửa nếu giờ khởi hành đã qua so với giờ hiện tại.</li>
-              <li><strong>Sau 17h00:</strong> Sửa đơn ngày mai (\(N+1\)) sẽ ở trạng thái <code>Pending (Chờ duyệt sau 17h)</code>.</li>
-              <li><strong>Bắt buộc:</strong> Phải nhập đầy đủ <u>Lý do giải trình</u>.</li>
-            </ul>
-          </div>
         </div>
       </div>
 
@@ -325,7 +332,6 @@
                 <label class="form-label fw-bold text-danger">Lý do giải trình sửa lịch <span class="text-danger">*</span></label>
                 <textarea class="form-control border-danger" name="note" id="editNote" rows="2" required 
                           placeholder="Bắt buộc nêu rõ lý do xin dời lịch, thay đổi nhân sự hoặc tuyến đường..."></textarea>
-                <div class="form-text text-danger small">* Chị Tina & Ban Quản trị yêu cầu giải trình minh bạch cho mọi đơn điều chỉnh.</div>
               </div>
             </div>
             <div class="mt-4 pt-2 border-top text-end">
@@ -339,11 +345,11 @@
       </div>
     </div>
 
-    <!-- TAB 3: BÁO CÁO LỊCH TRÌNH LÁI XE HÀNG NGÀY (THỜI GIAN THỰC) -->
+    <!-- TAB 3: BÁO CÁO LỊCH TRÌNH LÁI XE HÀNG NGÀY (CHỈ HIỂN THỊ ĐƠN ĐÃ DUYỆT) -->
     <div class="tab-pane fade" id="tab-driver">
       <div class="card card-custom">
         <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <span><i class="bi bi-truck-front-fill me-2"></i>Lịch Trình Điều Phối Lái Xe Theo Ngày</span>
+          <span><i class="bi bi-truck-front-fill text-success me-2"></i>Lịch Trình Lái Xe Nam (Chỉ Đơn Đã Duyệt)</span>
           <div class="d-flex align-items-center gap-2">
             <button class="btn btn-outline-primary btn-sm fw-bold" onclick="setDriverDate('today')">Hôm nay</button>
             <button class="btn btn-outline-primary btn-sm fw-bold" onclick="setDriverDate('tomorrow')">Ngày mai</button>
@@ -351,37 +357,60 @@
           </div>
         </div>
         <div class="card-body p-4">
-          <!-- THANH TỔNG HỢP NHANH CHO LÁI XE -->
-          <div class="row g-2 mb-3 text-center">
-            <div class="col-md-4">
-              <div class="p-2 bg-light rounded border border-primary">
-                <small class="text-muted fw-bold">TỔNG CHUYẾN TRONG NGÀY</small>
-                <div class="fs-4 fw-bold text-primary" id="driverTotalCount">0 chuyến</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="p-2 bg-light rounded border border-success">
-                <small class="text-muted fw-bold">CHUYẾN DÙNG RANGER</small>
-                <div class="fs-4 fw-bold text-success" id="driverRangerCount">0 chuyến</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="p-2 bg-light rounded border border-warning">
-                <small class="text-muted fw-bold">ĐƠN CHỜ XỬ LÝ / PENDING</small>
-                <div class="fs-4 fw-bold text-warning" id="driverPendingCount">0 đơn</div>
-              </div>
-            </div>
+          <div class="alert alert-success py-2 mb-3 small d-flex align-items-center">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            <div><strong>Nguyên tắc an toàn vận hành:</strong> Bác tài xế Nam chỉ nhận lệnh và thực hiện các chuyến xe đã được duyệt chính thức. Các đơn Pending/Xung đột đã được lọc bỏ để đảm bảo lộ trình thông suốt.</div>
           </div>
-
-          <!-- DANH SÁCH THẺ CÔNG VIỆC CHO LÁI XE -->
+          
           <div id="driverScheduleList">
-            <div class="text-center p-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span> Đang tải lịch trình điều phối...</div>
+            <div class="text-center p-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span> Đang tải lịch trình đã duyệt...</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB 4: BÁO CÁO HIỆU QUẢ THEO KỲ -->
+    <!-- TAB 4: CỔNG PHÊ DUYỆT TINA GATEKEEPER (0985456848 / 7788) -->
+    <div class="tab-pane fade" id="tab-tina">
+      <div class="card card-custom border border-primary">
+        <div class="card-header-custom text-white d-flex justify-content-between align-items-center" style="background: #7b1fa2;">
+          <span class="fs-6"><i class="bi bi-shield-shaded me-2"></i>Cổng Phê Duyệt Pre-CEO Gatekeeper (Chị Tina)</span>
+          <span class="badge bg-light text-dark">DOA Phê duyệt ngoại lệ</span>
+        </div>
+        <div class="card-body p-4">
+          
+          <!-- HỘP ĐĂNG NHẬP XÁC THỰC QUYỀN TINA -->
+          <div id="tinaAuthBox" class="p-3 bg-light rounded border mb-4">
+            <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-lock-fill me-1"></i>Xác thực quyền Phê duyệt Lãnh đạo:</h6>
+            <div class="row g-2 align-items-center">
+              <div class="col-md-5">
+                <input type="tel" class="form-control fw-bold" id="tinaAuthPhone" value="0985456848" placeholder="SĐT Chị Tina (0985456848)">
+              </div>
+              <div class="col-md-4">
+                <input type="password" class="form-control fw-bold border-danger" id="tinaAuthPin" placeholder="Mã PIN Chị Tina (4 số)..." maxlength="4">
+              </div>
+              <div class="col-md-3">
+                <button class="btn text-white w-100 fw-bold" style="background:#7b1fa2;" onclick="loadTinaPendingOrders()">
+                  <i class="bi bi-key-fill me-1"></i> Mở Bảng Duyệt
+                </button>
+              </div>
+            </div>
+            <small class="text-muted d-block mt-2">* Căn cứ quy chế: Chỉ Chị Tina mới có thẩm quyền giải quyết xung đột xe, duyệt đơn sửa sau 17h hoặc đơn cồng kềnh.</small>
+          </div>
+
+          <!-- BẢNG DANH SÁCH LỆNH PENDING CHỜ TINA DUYỆT -->
+          <div id="tinaPendingArea" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold text-dark mb-0"><i class="bi bi-list-task me-1"></i>Danh sách lệnh Pending & Xung đột quy tắc:</h6>
+              <button class="btn btn-outline-secondary btn-sm fw-bold" onclick="loadTinaPendingOrders()"><i class="bi bi-arrow-clockwise me-1"></i>Làm mới</button>
+            </div>
+            <div id="tinaPendingList"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: BÁO CÁO KPI HIỆU QUẢ THEO KỲ -->
     <div class="tab-pane fade" id="tab-report">
       <div class="card card-custom">
         <div class="card-header-custom d-flex justify-content-between align-items-center">
@@ -414,7 +443,7 @@
               <div class="kpi-card border-warning">
                 <div class="text-muted small fw-bold">CHỜ DUYỆT (PENDING)</div>
                 <div class="fs-2 fw-bold text-warning" id="kpiPending">0</div>
-                <div class="small text-muted">Sửa sau 17h00</div>
+                <div class="small text-muted">Cần Tina duyệt</div>
               </div>
             </div>
             <div class="col-6 col-md-3">
@@ -454,7 +483,6 @@
   // ĐƯỜNG LINK APPS SCRIPT CỦA CHỊ TINA
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWtr8RY8zKqyGzkrSPGuLV3LM6y-TDD9Ni2zRCy8AXjJEmDjkrLKsfRG-XBIiLo1hEUA/exec";
 
-  // DANH BẠ NHÂN SỰ YDS NỘI BỘ ĐỂ KIỂM TRA TỨC THÌ
   const LOCAL_EMPLOYEES = {
     "0865195665": { name: "Ms.Trâm", dept: "Hanh Chinh" },
     "0962194446": { name: "Ms.Phương", dept: "Ke Toan" },
@@ -478,7 +506,6 @@
   document.getElementById('editReqDate').min = todayStr;
   document.getElementById('driverDatePicker').value = todayStr;
 
-  // TỰ ĐỘNG TẢI TÊN KHI NHẬP SĐT TRỰC TIẾP
   function onPhoneInput(type) {
     if (type === 'create') {
       const phone = document.getElementById('createPhone').value.trim();
@@ -523,7 +550,7 @@
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực PIN & gửi...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & gửi...';
 
     if (window.google && google.script) {
       google.script.run
@@ -568,7 +595,7 @@
     }
   }
 
-  // 2. TÌM KIẾM ĐƠN ĐỂ SỬA (SĐT + PIN)
+  // 2. TÌM KIẾM ĐƠN ĐỂ SỬA
   function searchOrders() {
     const phone = document.getElementById('searchPhone').value.trim();
     const pin = document.getElementById('searchPin').value.trim();
@@ -650,8 +677,6 @@
     document.getElementById('editStartLoc').value = ord.startLoc;
     document.getElementById('editEndLoc').value = ord.endLoc;
     document.getElementById('editNote').value = "";
-    
-    checkCutoffNotice();
     document.getElementById('editFormArea').scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -674,7 +699,7 @@
 
     if (selDateOnly.getTime() === tomorrow.getTime() && now.getHours() >= 17) {
       noticeDiv.style.display = "block";
-      noticeDiv.innerHTML = '<i class="bi bi-exclamation-octagon-fill me-1"></i> CẢNH BÁO: Hiện tại đã sau 17h00. Sửa lịch cho ngày mai sẽ ở trạng thái <u>Pending chờ duyệt</u>!';
+      noticeDiv.innerHTML = '<i class="bi bi-exclamation-octagon-fill me-1"></i> CẢNH BÁO: Đã sau 17h00. Sửa lịch cho ngày mai sẽ ở trạng thái <u>Pending chờ Tina duyệt</u>!';
     } else {
       noticeDiv.style.display = "none";
     }
@@ -734,7 +759,7 @@
     }
   }
 
-  // 3. BÁO CÁO LỊCH TRÌNH LÁI XE HÀNG NGÀY
+  // 3. BÁO CÁO LỊCH TRÌNH LÁI XE (CHỈ ĐƠN ĐÃ DUYỆT)
   function setDriverDate(type) {
     const picker = document.getElementById('driverDatePicker');
     const d = new Date();
@@ -746,7 +771,7 @@
   function loadDriverSchedule() {
     const dateVal = document.getElementById('driverDatePicker').value || todayStr;
     const container = document.getElementById('driverScheduleList');
-    container.innerHTML = '<div class="text-center p-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span> Đang tải lịch trình điều phối...</div>';
+    container.innerHTML = '<div class="text-center p-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span> Đang tải lịch trình đã duyệt...</div>';
 
     if (window.google && google.script) {
       google.script.run
@@ -766,34 +791,20 @@
     const container = document.getElementById('driverScheduleList');
     container.innerHTML = "";
 
-    let total = list ? list.length : 0;
-    let ranger = 0;
-    let pending = 0;
-
     if (!list || list.length === 0) {
-      container.innerHTML = '<div class="alert alert-info py-4 text-center"><i class="bi bi-calendar-x fs-3 d-block mb-2"></i>Không có lịch công tác / điều xe nào trong ngày này.</div>';
-      document.getElementById('driverTotalCount').innerText = "0 chuyến";
-      document.getElementById('driverRangerCount').innerText = "0 chuyến";
-      document.getElementById('driverPendingCount').innerText = "0 đơn";
+      container.innerHTML = '<div class="alert alert-info py-4 text-center"><i class="bi bi-calendar-check fs-3 d-block mb-2"></i>Không có chuyến xe nào đã duyệt trong ngày này.</div>';
       return;
     }
 
     list.forEach((item, idx) => {
-      if ((item.vehicle || "").indexOf("Ranger") > -1) ranger++;
-      if ((item.status || "").indexOf("Pending") > -1 || (item.status || "").indexOf("Chờ") > -1) pending++;
-
-      let badgeColor = "bg-primary";
-      if (item.status.indexOf("Pending") > -1) badgeColor = "bg-warning text-dark";
-      else if (item.status.indexOf("Đã cập nhật") > -1) badgeColor = "bg-info text-dark";
-
       const card = document.createElement('div');
       card.className = "driver-card p-3 mb-3";
       card.innerHTML = `
         <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2 flex-wrap gap-2">
           <div>
-            <span class="badge bg-dark me-2">Chuyến #${idx + 1}</span>
+            <span class="badge bg-success me-2">Lệnh Chạy #${idx + 1}</span>
             <span class="fw-bold text-primary fs-6">${item.orderId}</span>
-            <span class="ms-2 badge ${badgeColor}">${item.status}</span>
+            <span class="ms-2 badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>${item.status}</span>
           </div>
           <div class="text-danger fw-bold fs-6">
             <i class="bi bi-clock-fill me-1"></i> ${item.startTime}
@@ -803,25 +814,171 @@
           <div class="col-md-6">
             <div class="small"><strong>Lộ trình:</strong> <span class="text-success fw-bold">${item.startLoc} ➔ ${item.endLoc}</span></div>
             <div class="small"><strong>Phương tiện:</strong> <span class="badge bg-secondary">${item.vehicle}</span> (${item.duration})</div>
-            <div class="small"><strong>Mô tả hàng hóa:</strong> ${item.cargoDesc || item.content || 'Không có mô tả'}</div>
+            <div class="small"><strong>Hàng hóa:</strong> ${item.cargoDesc || item.content || 'Không có mô tả'}</div>
           </div>
           <div class="col-md-6 border-start-md">
             <div class="small"><strong>Người đăng ký:</strong> <span class="fw-bold">${item.fullName}</span> (${item.department})</div>
             <div class="small"><strong>Liên hệ bắt đầu:</strong> <a href="tel:${item.phone}" class="fw-bold text-decoration-none"><i class="bi bi-telephone-outbound-fill text-primary me-1"></i>${item.contactStart || item.phone}</a></div>
             <div class="small"><strong>Liên hệ kết thúc:</strong> ${item.contactEnd || 'Không có'}</div>
           </div>
-          ${item.note ? `<div class="col-12 mt-1"><div class="small text-danger bg-light p-1 rounded"><strong>Ghi chú / Giải trình:</strong> ${item.note}</div></div>` : ''}
+          ${item.note ? `<div class="col-12 mt-1"><div class="small text-secondary bg-light p-1 rounded"><strong>Ghi chú:</strong> ${item.note}</div></div>` : ''}
         </div>
       `;
       container.appendChild(card);
     });
-
-    document.getElementById('driverTotalCount').innerText = total + " chuyến";
-    document.getElementById('driverRangerCount').innerText = ranger + " chuyến";
-    document.getElementById('driverPendingCount').innerText = pending + " đơn";
   }
 
-  // 4. BÁO CÁO TỔNG QUAN THEO KỲ
+  // 4. CỔNG PHÊ DUYỆT TINA GATEKEEPER
+  function loadTinaPendingOrders() {
+    const phone = document.getElementById('tinaAuthPhone').value.trim();
+    const pin = document.getElementById('tinaAuthPin').value.trim();
+
+    if (phone !== "0985456848" || pin !== "7788") {
+      alert("Từ chối quyền truy cập! Chỉ Chị Tina (0985456848) mới có quyền duyệt đơn.");
+      return;
+    }
+
+    const container = document.getElementById('tinaPendingList');
+    const area = document.getElementById('tinaPendingArea');
+    area.style.display = "block";
+    container.innerHTML = '<div class="text-center p-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span> Đang tải các lệnh chờ duyệt & phân tích quy tắc xung đột...</div>';
+
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(renderTinaPendingList)
+        .withFailureHandler(err => alert("Lỗi: " + err.message))
+        .getPendingOrdersForTina(phone, pin);
+    } else if (SCRIPT_URL) {
+      fetch(`${SCRIPT_URL}?action=getPendingOrdersForTina&phone=${encodeURIComponent(phone)}&pin=${encodeURIComponent(pin)}`)
+        .then(res => res.json())
+        .then(res => {
+          if (res.error) throw new Error(res.error);
+          renderTinaPendingList(res);
+        })
+        .catch(err => {
+          container.innerHTML = `<div class="alert alert-danger">Lỗi: ${err.message}</div>`;
+        });
+    }
+  }
+
+  function renderTinaPendingList(list) {
+    const container = document.getElementById('tinaPendingList');
+    container.innerHTML = "";
+
+    if (!list || list.length === 0) {
+      container.innerHTML = '<div class="alert alert-success py-3 text-center"><i class="bi bi-check2-all fs-4 d-block mb-1"></i>Tuyệt vời! Hiện tại không có lệnh nào bị xung đột hoặc đang chờ duyệt.</div>';
+      return;
+    }
+
+    list.forEach(item => {
+      let riskBadge = `<span class="badge bg-success">Hợp lệ</span>`;
+      let cardBorder = "border-warning";
+      if (item.conflictRisk === "HIGH") {
+        riskBadge = `<span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>XUNG ĐỘT CAO</span>`;
+        cardBorder = "border-danger";
+      } else if (item.conflictRisk === "MEDIUM") {
+        riskBadge = `<span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i>CẦN LƯU Ý</span>`;
+      }
+
+      const card = document.createElement('div');
+      card.className = `pending-card p-3 mb-3 border ${cardBorder}`;
+      card.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2 flex-wrap gap-2">
+          <div>
+            <span class="fw-bold text-primary fs-6">${item.orderId}</span>
+            <span class="ms-2 badge bg-secondary">${item.status}</span>
+            <span class="ms-1">${riskBadge}</span>
+          </div>
+          <div class="fw-bold text-dark small">
+            Khởi hành: <span class="badge bg-primary">${item.requestDate}</span> lúc <strong>${item.startTime}</strong>
+          </div>
+        </div>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <div class="small"><strong>Nhân sự trình:</strong> ${item.fullName} (${item.department} - <a href="tel:${item.phone}">${item.phone}</a>)</div>
+            <div class="small"><strong>Lộ trình:</strong> <span class="fw-bold text-success">${item.startLoc} ➔ ${item.endLoc}</span></div>
+            <div class="small"><strong>Nội dung:</strong> ${item.content || 'Không ghi'}</div>
+          </div>
+          <div class="col-md-6 border-start-md">
+            <div class="small"><strong>Hàng hóa/Xe:</strong> ${item.cargoDesc || 'Không'} • ${item.vehicle}</div>
+            <div class="small text-danger"><strong>Lý do giải trình:</strong> ${item.note || 'Không có'}</div>
+          </div>
+          
+          <!-- HỘP PHÂN TÍCH XUNG ĐỘT THEO QUY_TAC_DIEU_PHOI_XE_YDS.md -->
+          <div class="col-12 mt-2">
+            <div class="p-2 bg-light rounded small border">
+              <strong><i class="bi bi-cpu-fill text-primary me-1"></i>Phân tích quy tắc điều phối:</strong> ${item.conflictReason}
+            </div>
+          </div>
+
+          <!-- Ô NHẬP Ý KIẾN CHỈ ĐẠO CỦA TINA VÀ 2 NÚT RA QUYẾT ĐỊNH -->
+          <div class="col-12 mt-2 pt-2 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="flex-grow-1 me-2">
+              <input type="text" class="form-control form-control-sm border-secondary" id="tinaNote_${item.rowIndex}" placeholder="Ý kiến chỉ đạo của Chị Tina (VD: Đồng ý ghép xe / Thuê ngoài Grab / Đổi giờ)...">
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-danger fw-bold" onclick="decideTinaOrder(${item.rowIndex}, '${item.orderId}', 'REJECT')">
+                <i class="bi bi-x-circle me-1"></i> Bác Bỏ
+              </button>
+              <button class="btn btn-sm btn-success fw-bold px-3" onclick="decideTinaOrder(${item.rowIndex}, '${item.orderId}', 'APPROVE')">
+                <i class="bi bi-check-circle me-1"></i> Phê Duyệt Lệnh
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function decideTinaOrder(rowIndex, orderId, decision) {
+    const phone = document.getElementById('tinaAuthPhone').value.trim();
+    const pin = document.getElementById('tinaAuthPin').value.trim();
+    const tinaNote = document.getElementById(`tinaNote_${rowIndex}`).value.trim();
+
+    if (!confirm(`Chị Tina có chắc chắn muốn ${decision === 'APPROVE' ? 'PHÊ DUYỆT' : 'BÁC BỎ'} lệnh ${orderId}?`)) {
+      return;
+    }
+
+    const payload = {
+      phone: phone,
+      pin: pin,
+      rowIndex: rowIndex,
+      orderId: orderId,
+      decision: decision,
+      tinaNote: tinaNote
+    };
+
+    if (window.google && google.script) {
+      google.script.run
+        .withSuccessHandler(res => {
+          alert(`Đã hoàn tất! Mã đơn ${res.orderId} chuyển sang: ${res.status}`);
+          loadTinaPendingOrders();
+          loadDriverSchedule(); // Cập nhật lại lịch cho lái xe
+        })
+        .withFailureHandler(err => alert("Lỗi: " + err.message))
+        .approveOrderByTina(payload);
+    } else if (SCRIPT_URL) {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "approveOrderByTina", data: payload })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert(`Đã hoàn tất! Mã đơn ${res.orderId} chuyển sang: ${res.status}`);
+          loadTinaPendingOrders();
+          loadDriverSchedule();
+        } else {
+          alert("Lỗi: " + res.error);
+        }
+      })
+      .catch(err => alert("Lỗi kết nối: " + err.message));
+    }
+  }
+
+  // 5. BÁO CÁO KPI THEO KỲ
   function changeRange(range, btn) {
     currentRange = range;
     document.querySelectorAll('#tab-report .btn-group button').forEach(b => b.classList.remove('active'));
