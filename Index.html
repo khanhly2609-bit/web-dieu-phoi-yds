@@ -64,6 +64,15 @@
     .kpi-card:hover {
       transform: translateY(-2px);
     }
+    .auth-badge {
+      background: #e6fffa;
+      color: #234e52;
+      border: 1px solid #b2f5ea;
+      border-radius: 6px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body class="py-3">
@@ -72,10 +81,10 @@
   <!-- HEADER -->
   <div class="header-bar d-flex align-items-center justify-content-between">
     <div>
-      <h4 class="mb-1 fw-bold"><i class="bi bi-truck-front me-2"></i>CỔNG ĐIỀU PHỐI HÀNH CHÍNH & XE YDS</h4>
-      <div class="small text-white-50">Đặt lịch mới • Tra cứu & Chỉnh sửa • Báo cáo hiệu suất theo kỳ</div>
+      <h4 class="mb-1 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>CỔNG ĐIỀU PHỐI HÀNH CHÍNH & XE YDS</h4>
+      <div class="small text-white-50">Xác thực Mã PIN nội bộ • Đặt lịch mới • Điều chỉnh lịch • Báo cáo hiệu quả</div>
     </div>
-    <span class="badge bg-light text-dark px-3 py-2 fw-bold"><i class="bi bi-shield-check text-success me-1"></i>Kiểm soát Thời gian thực</span>
+    <span class="badge bg-light text-dark px-3 py-2 fw-bold"><i class="bi bi-lock-fill text-warning me-1"></i>Bảo mật Mã PIN</span>
   </div>
 
   <!-- NAVIGATION TABS -->
@@ -87,7 +96,7 @@
     </li>
     <li class="nav-item">
       <button class="nav-link" id="tab-edit-btn" data-bs-toggle="pill" data-bs-target="#tab-edit" type="button">
-        <i class="bi bi-phone me-1"></i> 2. Tra Cứu & Sửa Lịch (SĐT)
+        <i class="bi bi-phone me-1"></i> 2. Tra Cứu & Sửa Lịch (PIN)
       </button>
     </li>
     <li class="nav-item">
@@ -110,32 +119,33 @@
         <div class="card-body p-4">
           <form id="formCreateOrder" onsubmit="handleCreateOrder(event)">
             <div class="row g-3">
+              
+              <!-- KHỐI ĐỊNH DANH BẰNG SĐT & TÊN TỰ ĐỘNG LOAD -->
               <div class="col-md-6">
-                <label class="form-label fw-bold">Số điện thoại nhân sự <span class="text-danger">*</span></label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
-                  <input type="tel" class="form-control" name="phone" id="createPhone" required 
-                         placeholder="0912345678" pattern="[0-9]{10}" title="Nhập đúng 10 chữ số">
-                </div>
-                <div class="form-text text-muted small">Dùng làm mã định danh tham chiếu kiểm tra và sửa lịch.</div>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Họ và tên nhân sự <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="fullName" required placeholder="Ví dụ: Nguyễn Văn A">
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Phòng ban <span class="text-danger">*</span></label>
-                <select class="form-select" name="department" required>
-                  <option value="">-- Chọn phòng ban --</option>
-                  <option value="Hanh Chinh">Hành chính</option>
-                  <option value="Ke Toan">Kế toán</option>
-                  <option value="Mua Hang">Mua hàng</option>
-                  <option value="Kinh Doanh">Kinh doanh</option>
-                  <option value="Kho Van">Kho vận</option>
-                  <option value="Khac">Khác</option>
+                <label class="form-label fw-bold">Chọn Số điện thoại nhân viên <span class="text-danger">*</span></label>
+                <select class="form-select border-primary fw-bold" name="phone" id="createPhone" required onchange="onPhoneSelectChange('create')">
+                  <option value="">-- Chọn SĐT trong danh bạ YDS --</option>
                 </select>
+                <div class="form-text text-muted small">Tên và phòng ban sẽ được hệ thống tự động điền.</div>
+              </div>
+
+              <!-- MÃ PIN BẮT BUỘC -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-danger"><i class="bi bi-key-fill me-1"></i>Mã PIN xác thực (4 số) <span class="text-danger">*</span></label>
+                <input type="password" class="form-control border-danger fw-bold" name="pin" id="createPin" required 
+                       placeholder="Nhập 4 số PIN được cấp..." maxlength="4" pattern="[0-9]{4}">
+                <div class="form-text text-danger small">* Khớp đúng mã PIN mới được phép gửi đơn.</div>
+              </div>
+
+              <!-- TÊN VÀ PHÒNG BAN HIỆN TỰ ĐỘNG -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Họ và tên nhân sự (Tự động)</label>
+                <input type="text" class="form-control bg-light fw-bold" name="fullName" id="createFullName" readonly placeholder="Chọn SĐT để tải tên...">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Phòng ban (Tự động)</label>
+                <input type="text" class="form-control bg-light fw-bold" name="department" id="createDept" readonly placeholder="Chọn SĐT để tải phòng ban...">
               </div>
 
               <div class="col-md-6">
@@ -150,7 +160,7 @@
 
               <div class="col-md-6">
                 <label class="form-label fw-bold">Ngày khởi hành / Thực hiện <span class="text-danger">*</span></label>
-                <input type="date" class="form-control border-primary" name="requestDate" id="createReqDate" required>
+                <input type="date" class="form-control border-primary fw-bold" name="requestDate" id="createReqDate" required>
                 <div class="form-text text-muted small">Hệ thống chặn không cho đặt lịch lùi về quá khứ.</div>
               </div>
 
@@ -166,6 +176,15 @@
               </div>
 
               <div class="col-md-6">
+                <label class="form-label fw-bold">Phương tiện đề xuất</label>
+                <select class="form-select" name="vehicle">
+                  <option value="Xe Ranger">Xe Ranger (Bán tải)</option>
+                  <option value="Có dùng xe (linh hoạt)">Có dùng xe (Linh hoạt)</option>
+                  <option value="Không sử dụng xe ô tô">Không sử dụng xe ô tô</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
                 <label class="form-label fw-bold">Điểm xuất phát <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" name="startLoc" value="VPO" required>
               </div>
@@ -173,15 +192,6 @@
               <div class="col-md-6">
                 <label class="form-label fw-bold">Điểm kết thúc <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" name="endLoc" value="HNO" required>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Phương tiện đề xuất</label>
-                <select class="form-select" name="vehicle">
-                  <option value="Xe Ranger">Xe Ranger (Bán tải)</option>
-                  <option value="Có dùng xe (linh hoạt)">Có dùng xe (Linh hoạt)</option>
-                  <option value="Không sử dụng xe ô tô">Không sử dụng xe ô tô</option>
-                </select>
               </div>
 
               <div class="col-md-6">
@@ -193,14 +203,14 @@
                 </select>
               </div>
 
-              <div class="col-12">
-                <label class="form-label fw-bold">Nội dung công việc / Mô tả hàng hóa</label>
-                <textarea class="form-control" name="content" rows="2" placeholder="Chi tiết số lượng kiện hàng, trọng tải hoặc ghi chú nhân sự đi cùng..."></textarea>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Ghi chú bổ sung</label>
+                <input type="text" class="form-control" name="note" placeholder="Thông tin liên hệ phụ trách điểm đến, yêu cầu gấp...">
               </div>
 
               <div class="col-12">
-                <label class="form-label fw-bold">Ghi chú bổ sung</label>
-                <input type="text" class="form-control" name="note" placeholder="Thông tin liên hệ phụ trách điểm đến, yêu cầu gấp...">
+                <label class="form-label fw-bold">Nội dung công việc / Mô tả hàng hóa</label>
+                <textarea class="form-control" name="content" rows="2" placeholder="Chi tiết số lượng kiện hàng, trọng tải hoặc ghi chú nhân sự đi cùng..."></textarea>
               </div>
             </div>
 
@@ -214,34 +224,37 @@
       </div>
     </div>
 
-    <!-- TAB 2: TRA CỨU & SỬA LỊCH BẰNG SĐT -->
+    <!-- TAB 2: TRA CỨU & SỬA LỊCH (BẮT BUỘC SĐT + MÃ PIN) -->
     <div class="tab-pane fade" id="tab-edit">
       <div class="card card-custom mb-3">
-        <div class="card-header-custom"><i class="bi bi-search me-2"></i>Tra cứu lịch trình theo Số điện thoại</div>
+        <div class="card-header-custom"><i class="bi bi-shield-check me-2"></i>Xác thực SĐT & Mã PIN để sửa lịch</div>
         <div class="card-body p-4">
-          <div class="row align-items-center g-2">
-            <div class="col-md-8">
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-phone-vibrate"></i></span>
-                <input type="tel" class="form-control form-control-lg" id="searchPhone" 
-                       placeholder="Nhập 10 số điện thoại đã đăng ký..." pattern="[0-9]{10}">
-              </div>
+          <div class="row align-items-center g-3">
+            <div class="col-md-5">
+              <label class="form-label fw-bold small">Số điện thoại</label>
+              <select class="form-select border-primary fw-bold" id="searchPhone" onchange="onPhoneSelectChange('search')">
+                <option value="">-- Chọn SĐT trong danh bạ YDS --</option>
+              </select>
             </div>
             <div class="col-md-4">
-              <button class="btn btn-primary btn-lg w-100 fw-bold" onclick="searchOrders()">
-                <i class="bi bi-search me-1"></i> Tìm Lịch Hợp Lệ
+              <label class="form-label fw-bold small text-danger">Mã PIN xác thực (4 số)</label>
+              <input type="password" class="form-control border-danger fw-bold" id="searchPin" 
+                     placeholder="Nhập 4 số PIN..." maxlength="4" pattern="[0-9]{4}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+              <button class="btn btn-primary w-100 fw-bold py-2" onclick="searchOrders()">
+                <i class="bi bi-unlock-fill me-1"></i> Mở Lịch Sửa
               </button>
             </div>
           </div>
           
-          <!-- HỘP THÔNG BÁO QUY CHẾ THỜI GIAN THỰC -->
           <div class="alert alert-warning py-2 mt-3 mb-0 small border-warning">
-            <div class="fw-bold mb-1"><i class="bi bi-shield-exclamation me-1"></i> Quy chế kiểm soát sửa lịch theo thời gian thực:</div>
+            <div class="fw-bold mb-1"><i class="bi bi-shield-exclamation me-1"></i> Quy chế bảo mật & kiểm soát sửa lịch:</div>
             <ul class="mb-0 ps-3">
-              <li><strong>Trong ngày:</strong> Không cho phép sửa nếu giờ khởi hành đã qua so với giờ hiện tại.</li>
-              <li><strong>Sau 17h00:</strong> Các đơn sửa ngày kế tiếp (N+1) sẽ chuyển trạng thái <code>Pending (Chờ duyệt)</code>.</li>
-              <li><strong>Từ ngày N+2:</strong> Cho phép điều chỉnh bình thường.</li>
-              <li><strong>Bắt buộc:</strong> Mọi đơn sửa phải có <u>Lý do giải trình cụ thể</u>.</li>
+              <li>Chỉ nhân sự <strong>nhập đúng Mã PIN</strong> mới được phép xem và điều chỉnh đơn của mình.</li>
+              <li><strong>Trong ngày:</strong> Khóa không cho sửa nếu giờ khởi hành đã qua giờ hiện tại.</li>
+              <li><strong>Sau 17h00:</strong> Sửa đơn ngày mai sẽ gắn trạng thái <code>Pending (Chờ duyệt sau 17h)</code>.</li>
+              <li><strong>Bắt buộc:</strong> Phải nhập đầy đủ <u>Lý do giải trình</u>.</li>
             </ul>
           </div>
         </div>
@@ -269,14 +282,17 @@
         <div class="card-body p-4">
           <form id="formEditOrder" onsubmit="handleUpdateOrder(event)">
             <input type="hidden" name="rowIndex" id="editRowIndex">
+            <input type="hidden" name="phone" id="editPhone">
+            <input type="hidden" name="pin" id="editPin">
+            
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label fw-bold">Họ và tên</label>
-                <input type="text" class="form-control" name="fullName" id="editFullName" required>
+                <label class="form-label fw-bold">Họ và tên nhân sự</label>
+                <input type="text" class="form-control bg-light fw-bold" name="fullName" id="editFullName" readonly>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-bold">Phòng ban</label>
-                <input type="text" class="form-control" name="department" id="editDept" required>
+                <input type="text" class="form-control bg-light fw-bold" name="department" id="editDept" readonly>
               </div>
               <div class="col-md-6">
                 <label class="form-label fw-bold">Ngày khởi hành MỚI <span class="text-danger">*</span></label>
@@ -386,11 +402,26 @@
   </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyWtr8RY8zKqyGzkrSPGuLV3LM6y-TDD9Ni2zRCy8AXjJEmDjkrLKsfRG-XBIiLo1hEUA/exec"; // Điền link Apps Script Web App nếu chạy qua Cloudflare Pages
+  const SCRIPT_URL = ""; 
+
+  // DANH SÁCH NHÂN SỰ & MÃ PIN KHỞI TẠO (TRÍCH XUẤT TỪ FILE EXCEL YDS)
+  const LOCAL_EMPLOYEES = {
+    "0865195665": { name: "Ms.Trâm", dept: "Hanh Chinh" },
+    "0962194446": { name: "Ms.Phương", dept: "Ke Toan" },
+    "0976996676": { name: "Ms.Hậu", dept: "Mua Hang" },
+    "0862428568": { name: "Ms.Huyền", dept: "Ke Toan" },
+    "0335184186": { name: "Mr.Nam", dept: "Hanh Chinh" },
+    "0862310486": { name: "Ms.Loan", dept: "Kinh Doanh" },
+    "0985456848": { name: "Ms.Tina", dept: "Hanh Chinh" },
+    "0337151186": { name: "Mr.Đức Anh", dept: "Kho Van" },
+    "0862357086": { name: "Ms.Mai", dept: "Hanh Chinh" },
+    "0865765665": { name: "Mr.Toàn", dept: "Mua Hang" },
+    "0962698597": { name: "Ms.Châm", dept: "Mua Hang" },
+    "0914676229": { name: "Mr.Minh Anh", dept: "Kinh Doanh" }
+  };
 
   let currentRange = 'week';
   const todayStr = new Date().toISOString().split('T')[0];
@@ -399,18 +430,57 @@
   document.getElementById('createReqDate').value = todayStr;
   document.getElementById('editReqDate').min = todayStr;
 
+  // Khởi tạo nạp danh bạ vào 2 thẻ Select
+  function populateEmployeeDropdowns() {
+    const selCreate = document.getElementById('createPhone');
+    const selSearch = document.getElementById('searchPhone');
+    
+    for (const [phone, info] of Object.entries(LOCAL_EMPLOYEES)) {
+      const opt1 = document.createElement('option');
+      opt1.value = phone;
+      opt1.text = `${phone} - ${info.name} (${info.dept})`;
+      selCreate.appendChild(opt1);
+
+      const opt2 = document.createElement('option');
+      opt2.value = phone;
+      opt2.text = `${phone} - ${info.name} (${info.dept})`;
+      selSearch.appendChild(opt2);
+    }
+  }
+  populateEmployeeDropdowns();
+
+  function onPhoneSelectChange(type) {
+    if (type === 'create') {
+      const phone = document.getElementById('createPhone').value;
+      const emp = LOCAL_EMPLOYEES[phone];
+      if (emp) {
+        document.getElementById('createFullName').value = emp.name;
+        document.getElementById('createDept').value = emp.dept;
+      } else {
+        document.getElementById('createFullName').value = "";
+        document.getElementById('createDept').value = "";
+      }
+    }
+  }
+
+  // 1. TẠO ĐƠN MỚI
   function handleCreateOrder(e) {
     e.preventDefault();
     const btn = document.getElementById('btnSubmitCreate');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang gửi...';
-
     const formData = Object.fromEntries(new FormData(e.target));
+
+    if (!formData.pin || formData.pin.length !== 4) {
+      alert("Vui lòng nhập đúng mã PIN gồm 4 chữ số!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & gửi...';
 
     if (window.google && google.script) {
       google.script.run
         .withSuccessHandler(res => {
-          alert("Tạo đơn thành công!\nMã Order của bạn: " + res.orderId);
+          alert(`Tạo đơn thành công cho ${res.name}!\nMã Order: ${res.orderId}`);
           e.target.reset();
           document.getElementById('createReqDate').value = todayStr;
           btn.disabled = false;
@@ -431,7 +501,7 @@
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          alert("Tạo đơn thành công!\nMã Order của bạn: " + res.orderId);
+          alert(`Tạo đơn thành công cho ${res.name}!\nMã Order: ${res.orderId}`);
           e.target.reset();
           document.getElementById('createReqDate').value = todayStr;
         } else {
@@ -446,51 +516,61 @@
         btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
       });
     } else {
-      alert("Hệ thống chưa kết nối Google Apps Script. Vui lòng kiểm tra lại SCRIPT_URL.");
+      alert("Chưa cấu hình SCRIPT_URL kết nối Google Apps Script.");
       btn.disabled = false;
       btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
     }
   }
 
+  // 2. TÌM KIẾM THEO SĐT + MÃ PIN
   function searchOrders() {
     const phone = document.getElementById('searchPhone').value.trim();
+    const pin = document.getElementById('searchPin').value.trim();
+
     if (!phone) {
-      alert("Vui lòng nhập số điện thoại.");
+      alert("Vui lòng chọn số điện thoại.");
+      return;
+    }
+    if (!pin || pin.length !== 4) {
+      alert("Vui lòng nhập đúng mã PIN xác thực 4 số.");
       return;
     }
 
     const area = document.getElementById('orderListArea');
     const list = document.getElementById('orderList');
-    list.innerHTML = '<div class="text-center p-3"><span class="spinner-border text-primary"></span> Đang kiểm tra lịch theo thời gian thực...</div>';
+    list.innerHTML = '<div class="text-center p-3"><span class="spinner-border text-primary"></span> Đang xác thực PIN & kiểm tra lịch...</div>';
     area.style.display = 'block';
     document.getElementById('editFormArea').style.display = 'none';
 
     if (window.google && google.script) {
       google.script.run
-        .withSuccessHandler(renderOrders)
+        .withSuccessHandler(orders => renderOrders(orders, phone, pin))
         .withFailureHandler(err => {
-          alert("Lỗi tra cứu: " + err.message);
+          alert("Lỗi xác thực: " + err.message);
           area.style.display = 'none';
         })
-        .getEditableOrders(phone);
+        .getEditableOrders(phone); // Hàm backend sẽ kiểm tra PIN
     } else if (SCRIPT_URL) {
-      fetch(`${SCRIPT_URL}?action=getEditableOrders&phone=${encodeURIComponent(phone)}`)
+      fetch(`${SCRIPT_URL}?action=getEditableOrders&phone=${encodeURIComponent(phone)}&pin=${encodeURIComponent(pin)}`)
         .then(res => res.json())
-        .then(renderOrders)
+        .then(res => {
+          if (res.error) throw new Error(res.error);
+          renderOrders(res, phone, pin);
+        })
         .catch(err => {
-          alert("Lỗi kết nối: " + err.message);
+          alert("Lỗi xác thực: " + err.message);
           area.style.display = 'none';
         });
     }
   }
 
-  function renderOrders(orders) {
+  function renderOrders(orders, phone, pin) {
     const list = document.getElementById('orderList');
     list.innerHTML = "";
     document.getElementById('foundCount').innerText = (orders ? orders.length : 0) + " đơn";
 
     if (!orders || orders.length === 0) {
-      list.innerHTML = '<div class="alert alert-info mb-0"><i class="bi bi-info-circle me-1"></i> Không tìm thấy đơn nào còn hiệu lực chỉnh sửa. Các đơn quá khứ hoặc đã qua giờ khởi hành hôm nay đã bị khóa tự động.</div>';
+      list.innerHTML = '<div class="alert alert-info mb-0"><i class="bi bi-info-circle me-1"></i> Không tìm thấy đơn nào còn hiệu lực chỉnh sửa cho nhân sự này.</div>';
       return;
     }
 
@@ -503,7 +583,7 @@
           <div class="small"><strong>Khởi hành:</strong> <span class="badge bg-success">${ord.requestDateDisplay || ord.requestDate}</span> - <span class="fw-bold text-dark">${ord.startTime || 'Linh hoạt'}</span></div>
           <div class="small text-muted text-truncate" style="max-width: 450px;"><strong>Nội dung:</strong> ${ord.content || 'Không ghi'}</div>
         </div>
-        <button class="btn btn-warning btn-sm fw-bold px-3" onclick='openEditForm(${JSON.stringify(ord)})'>
+        <button class="btn btn-warning btn-sm fw-bold px-3" onclick='openEditForm(${JSON.stringify(ord)}, "${phone}", "${pin}")'>
           <i class="bi bi-pencil-fill me-1"></i> Sửa Lịch
         </button>
       `;
@@ -511,17 +591,19 @@
     });
   }
 
-  function openEditForm(ord) {
+  function openEditForm(ord, phone, pin) {
     document.getElementById('editFormArea').style.display = "block";
     document.getElementById('lblEditOrderId').innerText = ord.orderId;
     document.getElementById('editRowIndex').value = ord.rowIndex;
+    document.getElementById('editPhone').value = phone;
+    document.getElementById('editPin').value = pin;
     document.getElementById('editFullName').value = ord.fullName;
     document.getElementById('editDept').value = ord.department;
     document.getElementById('editReqDate').value = ord.requestDate;
     document.getElementById('editStartTime').value = ord.startTime || "Linh hoạt trong buổi sáng";
     document.getElementById('editStartLoc').value = ord.startLoc;
     document.getElementById('editEndLoc').value = ord.endLoc;
-    document.getElementById('editNote').value = ""; // Buộc nhập lý do mới
+    document.getElementById('editNote').value = "";
     
     checkCutoffNotice();
     document.getElementById('editFormArea').scrollIntoView({ behavior: 'smooth' });
@@ -531,7 +613,6 @@
     document.getElementById('editFormArea').style.display = "none";
   }
 
-  // Cảnh báo quy tắc 17h00 trực quan trên màn hình
   function checkCutoffNotice() {
     const selectedDate = document.getElementById('editReqDate').value;
     const noticeDiv = document.getElementById('cutoffNotice');
@@ -558,31 +639,13 @@
     const btn = document.getElementById('btnSubmitEdit');
     const data = Object.fromEntries(new FormData(e.target));
 
-    // Kiểm tra giờ thực tế ở máy khách
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const selDate = new Date(data.requestDate);
-    const selDateOnly = new Date(selDate.getFullYear(), selDate.getMonth(), selDate.getDate());
-
-    if (selDateOnly.getTime() === today.getTime()) {
-      let reqHour = 8;
-      if (data.startTime.includes("13:30") || data.startTime.includes("chiều")) reqHour = 13;
-      if (data.startTime.includes("17:00")) reqHour = 17;
-      if (data.startTime.includes("08:00") || data.startTime.includes("sáng")) reqHour = 8;
-
-      if (reqHour <= now.getHours()) {
-        alert(`Không được phép! Hiện tại là ${now.getHours()}h, không thể chọn thời gian khởi hành là ${data.startTime} cùng ngày.`);
-        return;
-      }
-    }
-
     if (!data.note || !data.note.trim()) {
-      alert("Vui lòng nhập lý do giải trình cho yêu cầu sửa lịch.");
+      alert("Bắt buộc phải nhập lý do giải trình khi điều chỉnh lịch!");
       return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & lưu...';
 
     if (window.google && google.script) {
       google.script.run
@@ -594,7 +657,7 @@
           searchOrders();
         })
         .withFailureHandler(err => {
-          alert("Lỗi cập nhật: " + err.message);
+          alert("Lỗi: " + err.message);
           btn.disabled = false;
           btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Lưu Cập Nhật';
         })
