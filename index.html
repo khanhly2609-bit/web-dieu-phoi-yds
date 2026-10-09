@@ -82,6 +82,162 @@
       background: #fff;
       border: 1px solid #e2e8f0;
     }
+    .order-status-card {
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: all 0.2s ease-in-out;
+      border: 1px solid #e2e8f0;
+    }
+    .order-status-card:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+    .order-status-card.approved {
+      border-left: 6px solid #198754;
+    }
+    .order-status-card.pending {
+      border-left: 6px solid #ffc107;
+    }
+    .order-status-card.rejected {
+      border-left: 6px solid #dc3545;
+    }
+    .order-status-card.afternoon {
+      border-left: 6px solid #0dcaf0;
+    }
+    .step-track-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 1.25rem 0 0.75rem 0;
+      padding: 0;
+    }
+    .step-track-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      position: relative;
+      z-index: 2;
+    }
+    .step-track-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+      background: #f1f3f5;
+      color: #6c757d;
+      border: 2px solid #dee2e6;
+    }
+    .step-track-circle.active-green {
+      background: #198754;
+      color: #fff;
+      border-color: #198754;
+      box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+    }
+    .step-track-circle.active-yellow {
+      background: #ffc107;
+      color: #212529;
+      border-color: #ffc107;
+      box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.25);
+    }
+    .step-track-line {
+      position: absolute;
+      top: 19px;
+      left: 16%;
+      right: 16%;
+      height: 3px;
+      background: #dee2e6;
+      z-index: 1;
+    }
+    /* KHUNG THỜI GIAN GIỜ NỔI BẬT ĐẬP VÀO MẮT ĐẦU TIÊN (TIME HERO ELEMENTS) */
+    .time-hero-banner {
+      background: linear-gradient(135deg, #002b5c 0%, #004b87 100%);
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 0.9rem 1.25rem;
+      border-left: 6px solid #ff9900;
+      box-shadow: 0 4px 12px rgba(0, 43, 92, 0.2);
+    }
+    .time-hero-clock {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #ffc107;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    .time-hero-date {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .time-strip-header {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+    .time-strip-header.driver-time {
+      background: #f0fdf4;
+      border-color: #86efac;
+      border-left: 6px solid #16a34a;
+    }
+    .time-strip-header.tina-time {
+      background: #faf5ff;
+      border-color: #d8b4fe;
+      border-left: 6px solid #9333ea;
+    }
+    .time-strip-header.user-time {
+      background: #f0f7ff;
+      border-color: #93c5fd;
+      border-left: 6px solid #2563eb;
+    }
+    .time-pill-hero {
+      background: linear-gradient(135deg, #003366 0%, #00509e 100%);
+      color: #ffc107;
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 0.4rem 0.95rem;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 6px rgba(0, 51, 102, 0.25);
+      display: inline-flex;
+      align-items: center;
+    }
+    .time-pill-green {
+      background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+    }
+    .time-pill-purple {
+      background: linear-gradient(135deg, #6b21a8 0%, #9333ea 100%);
+      color: #fef08a;
+      box-shadow: 0 2px 6px rgba(147, 51, 234, 0.3);
+    }
+    .date-pill-hero {
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      border: 1.5px solid #94a3b8;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      display: inline-flex;
+      align-items: center;
+    }
   </style>
 </head>
 <body class="py-3">
@@ -113,7 +269,7 @@
     </li>
     <li class="nav-item">
       <button class="nav-link" id="tab-edit-btn" data-bs-toggle="pill" data-bs-target="#tab-edit" type="button">
-        <i class="bi bi-phone me-1"></i> 2. Tra Cứu & Sửa Lịch
+        <i class="bi bi-clock-history me-1"></i> 2. Đơn Của Tôi & Trạng Thái
       </button>
     </li>
     <li class="nav-item">
@@ -138,6 +294,10 @@
 
     <!-- TAB 1: FORM TẠO MỚI ORDER (NHẬP SĐT TRỰC TIẾP, CHECK MÃ PIN) -->
     <div class="tab-pane fade show active" id="tab-create">
+
+      <!-- THẺ THEO DÕI TÌNH TRẠNG ĐƠN VỪA ĐẶT (INSTANT LIVE STATUS CARD) -->
+      <div id="justCreatedOrderCard" style="display:none;" class="mb-4"></div>
+
       <div class="card card-custom">
         <div class="card-header-custom d-flex justify-content-between align-items-center">
           <span><i class="bi bi-pencil-square me-2"></i>Thông tin đăng ký lịch xe / hành chính</span>
@@ -253,41 +413,79 @@
       </div>
     </div>
 
-    <!-- TAB 2: TRA CỨU & SỬA LỊCH (NHẬP SĐT + MÃ PIN) -->
+    <!-- TAB 2: ĐƠN CỦA TÔI & TRẠNG THÁI (NHẬP SĐT + MÃ PIN) -->
     <div class="tab-pane fade" id="tab-edit">
       <div class="card card-custom mb-3">
-        <div class="card-header-custom"><i class="bi bi-shield-check me-2"></i>Xác thực SĐT & Mã PIN để sửa lịch</div>
+        <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <span><i class="bi bi-clock-history me-2"></i>Tra Cứu Đơn Của Tôi & Trạng Thái Xử Lý</span>
+          <span class="badge bg-primary text-white"><i class="bi bi-shield-lock me-1"></i>Xác thực SĐT + Mã PIN</span>
+        </div>
         <div class="card-body p-4">
           <div class="row align-items-center g-3">
             <div class="col-md-5">
-              <label class="form-label fw-bold small">Nhập Số điện thoại</label>
+              <label class="form-label fw-bold small">Số điện thoại nhân viên</label>
               <input type="tel" class="form-control border-primary fw-bold" id="searchPhone" 
                      placeholder="Nhập 10 số (VD: 0985456848)" pattern="[0-9]{10}" oninput="onPhoneInput('search')">
               <div id="phoneNoticeSearch" class="small mt-1 text-primary fw-bold"></div>
             </div>
             <div class="col-md-4">
-              <label class="form-label fw-bold small text-danger">Mã PIN xác thực (4 số)</label>
+              <label class="form-label fw-bold small text-danger"><i class="bi bi-key-fill me-1"></i>Mã PIN xác thực (4 số)</label>
               <input type="password" class="form-control border-danger fw-bold" id="searchPin" 
                      placeholder="Nhập 4 số PIN..." maxlength="4" pattern="[0-9]{4}">
             </div>
             <div class="col-md-3 d-flex align-items-end">
-              <button class="btn btn-primary w-100 fw-bold py-2" onclick="searchOrders()">
-                <i class="bi bi-unlock-fill me-1"></i> Mở Lịch Sửa
+              <button class="btn btn-primary w-100 fw-bold py-2 shadow-sm" onclick="searchOrders()">
+                <i class="bi bi-search me-1"></i> Xem Đơn Của Tôi
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Danh sách order hợp lệ -->
+      <!-- Khu vực hiển thị toàn bộ đơn & trạng thái -->
       <div id="orderListArea" style="display:none;" class="mb-3">
+        <!-- Dashboard thống kê nhanh đơn của nhân sự -->
+        <div class="row g-2 mb-3 text-center" id="userStatsRow">
+          <div class="col-6 col-md-3">
+            <div class="p-2 bg-white rounded border shadow-sm">
+              <div class="small text-muted fw-bold">TỔNG SỐ ĐƠN</div>
+              <div class="fs-4 fw-bold text-primary" id="userTotalCount">0</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-2 bg-white rounded border shadow-sm">
+              <div class="small text-muted fw-bold">ĐÃ DUYỆT</div>
+              <div class="fs-4 fw-bold text-success" id="userApprovedCount">0</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-2 bg-white rounded border shadow-sm">
+              <div class="small text-muted fw-bold">CHỜ TINA DUYỆT</div>
+              <div class="fs-4 fw-bold text-warning" id="userPendingCount">0</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="p-2 bg-white rounded border shadow-sm">
+              <div class="small text-muted fw-bold">ĐÃ DỜI CA / KHÁC</div>
+              <div class="fs-4 fw-bold text-secondary" id="userOtherCount">0</div>
+            </div>
+          </div>
+        </div>
+
         <div class="card card-custom">
-          <div class="card-header-custom bg-light d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-list-check me-2"></i>Đơn hợp lệ có thể chỉnh sửa:</span>
-            <span class="badge bg-primary" id="foundCount">0 đơn</span>
+          <div class="card-header-custom bg-light d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-card-checklist me-2"></i>Danh Sách Đơn & Tiến Trình Điều Phối:</span>
+            <div class="d-flex align-items-center gap-2">
+              <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-secondary active" id="btnFilterAll" onclick="filterUserOrders('all')">Tất cả</button>
+                <button type="button" class="btn btn-outline-success" id="btnFilterApproved" onclick="filterUserOrders('approved')">Đã duyệt</button>
+                <button type="button" class="btn btn-outline-warning text-dark" id="btnFilterPending" onclick="filterUserOrders('pending')">Chờ duyệt</button>
+              </div>
+              <span class="badge bg-primary" id="foundCount">0 đơn</span>
+            </div>
           </div>
           <div class="card-body p-3">
-            <div id="orderList" class="list-group"></div>
+            <div id="orderList"></div>
           </div>
         </div>
       </div>
@@ -554,7 +752,8 @@
   function handleCreateOrder(e) {
     e.preventDefault();
     const btn = document.getElementById('btnSubmitCreate');
-    const formData = Object.fromEntries(new FormData(e.target));
+    const form = e.target;
+    const formData = Object.fromEntries(new FormData(form));
 
     if (!formData.pin || formData.pin.length !== 4) {
       alert("Vui lòng nhập đúng mã PIN gồm 4 chữ số!");
@@ -562,23 +761,38 @@
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & gửi...';
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & phân tích điều phối...';
+
+    function onCreatedSuccess(res) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+
+      // Tự động điền SĐT và PIN sang Tab 2 để tiện tra cứu
+      const searchPhoneEl = document.getElementById('searchPhone');
+      const searchPinEl = document.getElementById('searchPin');
+      if (searchPhoneEl) searchPhoneEl.value = formData.phone;
+      if (searchPinEl) searchPinEl.value = formData.pin;
+      onPhoneInput('search');
+
+      // Hiển thị Thẻ Theo Dõi Tình Trạng Đơn Vừa Đặt
+      renderJustCreatedOrder(res, formData);
+
+      // Reset form nhưng giữ ngày hôm nay
+      form.reset();
+      document.getElementById('createReqDate').value = todayStr;
+      document.getElementById('phoneNoticeCreate').innerHTML = "";
+    }
+
+    function onCreatedError(err) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+      alert("Lỗi tạo đơn: " + (err.message || err));
+    }
 
     if (window.google && google.script) {
       google.script.run
-        .withSuccessHandler(res => {
-          alert(`Tạo đơn thành công cho ${res.name}!\nMã Order: ${res.orderId}`);
-          e.target.reset();
-          document.getElementById('createReqDate').value = todayStr;
-          document.getElementById('phoneNoticeCreate').innerHTML = "";
-          btn.disabled = false;
-          btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
-        })
-        .withFailureHandler(err => {
-          alert("Lỗi: " + err.message);
-          btn.disabled = false;
-          btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
-        })
+        .withSuccessHandler(onCreatedSuccess)
+        .withFailureHandler(onCreatedError)
         .createOrder(formData);
     } else if (SCRIPT_URL) {
       fetch(SCRIPT_URL, {
@@ -586,28 +800,213 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: "createOrder", data: formData })
       })
-      .then(res => res.json())
+      .then(r => r.json())
       .then(res => {
-        if (res.success) {
-          alert(`Tạo đơn thành công cho ${res.name}!\nMã Order: ${res.orderId}`);
-          e.target.reset();
-          document.getElementById('createReqDate').value = todayStr;
-          document.getElementById('phoneNoticeCreate').innerHTML = "";
-        } else {
-          alert("Lỗi: " + (res.error || "Không thể tạo đơn"));
-        }
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
+        if (res.success) onCreatedSuccess(res);
+        else onCreatedError(new Error(res.error || "Không thể tạo đơn"));
       })
-      .catch(err => {
-        alert("Lỗi kết nối: " + err.message);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch';
-      });
+      .catch(onCreatedError);
     }
   }
 
-  // 2. TÌM KIẾM ĐƠN ĐỂ SỬA
+  // HÀM CHUẨN HÓA ĐỊNH DẠNG NGÀY HIỂN THỊ (DD/MM/YYYY)
+  function cleanDateDisplay(val) {
+    if (!val) return "";
+    const s = val.toString().trim();
+    if (s.indexOf("GMT") > -1 || s.indexOf("Giờ") > -1 || (s.length > 15 && isNaN(s) && !isNaN(Date.parse(s)) && s.indexOf("/") === -1)) {
+      const d = new Date(s);
+      if (!isNaN(d.getTime())) {
+        const day = ("0" + d.getDate()).slice(-2);
+        const month = ("0" + (d.getMonth() + 1)).slice(-2);
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    }
+    if (s.indexOf("-") > -1) {
+      const parts = s.split("-");
+      if (parts.length === 3 && parts[0].length === 4) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+    }
+    return s;
+  }
+
+  // HIỂN THỊ THẺ THEO DÕI TÌNH TRẠNG ĐƠN VỪA ĐẶT (INSTANT LIVE STATUS CARD)
+  function renderJustCreatedOrder(res, formValues) {
+    const cardEl = document.getElementById('justCreatedOrderCard');
+    if (!cardEl) return;
+
+    const orderId = res.orderId || "ORD-XXXX";
+    const status = res.status || "Chờ xử lý";
+    const name = res.name || formValues.fullName || "Nhân sự YDS";
+    const phone = res.phone || formValues.phone;
+    const dept = res.department || formValues.department || "";
+    const reqDate = res.requestDate || formValues.requestDate;
+    const startTime = res.startTime || formValues.startTime || "Linh hoạt";
+    const estDur = res.estimatedDuration || "Khoảng 2 - 4 tiếng";
+    const startLoc = res.startLoc || formValues.startLoc || "VPO";
+    const endLoc = res.endLoc || formValues.endLoc || "HNO";
+    const vehicle = res.vehicle || formValues.vehicle || "Xe Ranger";
+    const riskLevel = res.riskLevel || (status.indexOf("Auto Approved") > -1 ? "LOW" : "MEDIUM");
+    const conflictReason = res.conflictReason || "";
+    const suggestion = res.suggestion || "";
+
+    const isAutoApproved = (riskLevel === "LOW") || (status.indexOf("Auto Approved") > -1) || (status.indexOf("Đã duyệt") > -1);
+    const borderColor = isAutoApproved ? "border-success" : "border-warning";
+    const headerBg = isAutoApproved ? "bg-success text-white" : "bg-warning text-dark";
+
+    let step2Class = isAutoApproved ? "active-green" : "active-yellow";
+    let step2Text = isAutoApproved ? "Đã duyệt tự động" : "Chờ Tina duyệt";
+    let step3Class = isAutoApproved ? "active-green" : "";
+    let step3Text = isAutoApproved ? "Nam nhận lệnh" : "Chờ sau duyệt";
+
+    let statusBadge = isAutoApproved 
+      ? `<span class="badge bg-success fs-6"><i class="bi bi-check-circle-fill me-1"></i>ĐÃ DUYỆT (TỰ ĐỘNG)</span>`
+      : `<span class="badge bg-warning text-dark fs-6"><i class="bi bi-hourglass-split me-1"></i>CHỜ TINA DUYỆT (PENDING)</span>`;
+
+    let noticeBox = "";
+    if (isAutoApproved) {
+      noticeBox = `
+        <div class="alert alert-success d-flex align-items-center mb-3 py-2 small">
+          <i class="bi bi-shield-check fs-4 me-2"></i>
+          <div><strong>Lộ trình thông suốt:</strong> Đơn hợp lệ, không xung đột ca hay tải trọng. Lệnh điều phối đã tự động chuyển thẳng sang lịch công việc của Bác tài Nam.</div>
+        </div>
+      `;
+    } else {
+      noticeBox = `
+        <div class="alert alert-warning d-flex align-items-start mb-3 py-2 small">
+          <i class="bi bi-exclamation-triangle-fill fs-4 me-2 mt-1 text-warning"></i>
+          <div>
+            <strong>Đơn cần Chị Tina Gatekeeper xem xét:</strong><br>
+            ${conflictReason ? `<span>• <strong>Lý do:</strong> ${conflictReason}</span><br>` : ''}
+            ${suggestion ? `<span>• <strong>Đề xuất AI:</strong> ${suggestion}</span>` : '<span>• Đang trong hàng đợi Chị Tina phê duyệt hoặc dời ca.</span>'}
+          </div>
+        </div>
+      `;
+    }
+
+    cardEl.className = `card card-custom mb-4 border-2 shadow ${borderColor}`;
+    cardEl.innerHTML = `
+      <div class="card-header-custom ${headerBg} d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span class="fs-6 fw-bold"><i class="bi bi-check2-circle me-2"></i>XÁC NHẬN TÌNH TRẠNG ĐƠN VỪA ĐẶT THÀNH CÔNG</span>
+        <div>${statusBadge}</div>
+      </div>
+      <div class="card-body p-4">
+        
+        <!-- KHUNG THỜI GIAN GIỜ NỔI BẬT ĐẬP VÀO MẮT ĐẦU TIÊN (TIME HERO BANNER) -->
+        <div class="time-hero-banner mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-2 bg-white bg-opacity-20 rounded-circle text-warning fs-2 lh-1">
+              <i class="bi bi-alarm-fill"></i>
+            </div>
+            <div>
+              <div class="small fw-bold text-uppercase text-white-50" style="letter-spacing: 0.5px;">⏰ THỜI GIAN KHỞI HÀNH</div>
+              <div class="d-flex align-items-baseline gap-2 flex-wrap">
+                <span class="time-hero-clock">${startTime}</span>
+                <span class="time-hero-date">📅 ${cleanDateDisplay(reqDate)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-end">
+            <span class="badge bg-light text-dark fs-6 px-3 py-2 border shadow-sm">
+              <i class="bi bi-hourglass-split text-primary me-1"></i>Thời gian: ${estDur}
+            </span>
+          </div>
+        </div>
+
+        ${noticeBox}
+
+        <!-- TIẾN TRÌNH 3 BƯỚC -->
+        <div class="step-track-box">
+          <div class="step-track-line"></div>
+          <div class="step-track-item">
+            <div class="step-track-circle active-green"><i class="bi bi-check-lg"></i></div>
+            <div class="small fw-bold text-success">1. Đã Gửi Đơn</div>
+            <div class="text-muted" style="font-size: 0.75rem;">Hệ thống ghi nhận</div>
+          </div>
+          <div class="step-track-item">
+            <div class="step-track-circle ${step2Class}"><i class="bi ${isAutoApproved ? 'bi-check-lg' : 'bi-person-check'}"></i></div>
+            <div class="small fw-bold ${isAutoApproved ? 'text-success' : 'text-warning'}">2. ${step2Text}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">Kiểm tra xung đột</div>
+          </div>
+          <div class="step-track-item">
+            <div class="step-track-circle ${step3Class}"><i class="bi ${isAutoApproved ? 'bi-truck' : 'bi-clock'}"></i></div>
+            <div class="small fw-bold ${isAutoApproved ? 'text-success' : 'text-muted'}">3. ${step3Text}</div>
+            <div class="text-muted" style="font-size: 0.75rem;">Bác tài xuất phát</div>
+          </div>
+        </div>
+
+        <!-- THÔNG TIN CHI TIẾT ĐƠN -->
+        <div class="bg-light p-3 rounded border mb-3">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <div class="small"><strong>Mã đơn:</strong> <span class="badge bg-primary fs-6 font-monospace">${orderId}</span></div>
+              <div class="small mt-1"><strong>Người đặt:</strong> <span class="fw-bold">${name}</span> (${dept} - ${phone})</div>
+              <div class="small mt-1"><strong>Lộ trình:</strong> <span class="fw-bold text-success">${startLoc} ➔ ${endLoc}</span></div>
+            </div>
+            <div class="col-md-6 border-start-md">
+              <div class="small"><strong>Phương tiện:</strong> <span class="fw-bold">${vehicle}</span></div>
+              <div class="small mt-1 text-muted"><strong>Hàng hóa / Nhân sự:</strong> ${res.cargoDesc || formValues.cargoDesc || formValues.content || 'Không có mô tả'}</div>
+              <div class="small mt-1"><strong>Ghi chú:</strong> ${res.note || formValues.note || 'Không có'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CÁC NÚT THAO TÁC NHANH -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
+          <div>
+            <button class="btn btn-outline-secondary btn-sm fw-bold me-2" onclick="copyOrderId('${orderId}')">
+              <i class="bi bi-clipboard me-1"></i> Sao Chép Mã Đơn
+            </button>
+            <button class="btn btn-primary btn-sm fw-bold shadow-sm" onclick="switchToMyOrders('${phone}', '${formValues.pin}')">
+              <i class="bi bi-clock-history me-1"></i> Xem Trong "Đơn Của Tôi & Trạng Thái"
+            </button>
+          </div>
+          <div>
+            <button class="btn btn-outline-primary btn-sm fw-bold" onclick="dismissCreatedOrderCard()">
+              <i class="bi bi-plus-circle me-1"></i> Đặt Thêm Đơn Khác
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    cardEl.style.display = "block";
+    cardEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyOrderId(id) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(id).then(() => {
+        alert("Đã sao chép mã đơn: " + id);
+      });
+    } else {
+      prompt("Sao chép mã đơn bên dưới:", id);
+    }
+  }
+
+  function dismissCreatedOrderCard() {
+    const cardEl = document.getElementById('justCreatedOrderCard');
+    if (cardEl) cardEl.style.display = "none";
+    const phoneInput = document.getElementById('createPhone');
+    if (phoneInput) phoneInput.focus();
+  }
+
+  function switchToMyOrders(phone, pin) {
+    const tabEditBtn = document.getElementById('tab-edit-btn');
+    if (tabEditBtn) {
+      tabEditBtn.click();
+      if (phone) document.getElementById('searchPhone').value = phone;
+      if (pin) document.getElementById('searchPin').value = pin;
+      onPhoneInput('search');
+      searchOrders();
+    }
+  }
+
+  // 2. TÌM KIẾM ĐƠN CỦA TÔI & TRẠNG THÁI
+  let currentFetchedUserOrders = [];
+  let currentActiveFilter = 'all';
+
   function searchOrders() {
     const phone = document.getElementById('searchPhone').value.trim();
     const pin = document.getElementById('searchPin').value.trim();
@@ -623,56 +1022,197 @@
 
     const area = document.getElementById('orderListArea');
     const list = document.getElementById('orderList');
-    list.innerHTML = '<div class="text-center p-3"><span class="spinner-border text-primary"></span> Đang xác thực PIN & kiểm tra lịch...</div>';
+    list.innerHTML = '<div class="text-center p-4 text-muted"><span class="spinner-border text-primary me-2"></span> Đang xác thực PIN & tải danh sách đơn của bạn...</div>';
     area.style.display = 'block';
     document.getElementById('editFormArea').style.display = 'none';
 
+    function handleOrdersResult(orders) {
+      currentFetchedUserOrders = orders || [];
+      updateUserStats(currentFetchedUserOrders);
+      filterUserOrders('all');
+    }
+
+    function handleOrdersError(err) {
+      list.innerHTML = `<div class="alert alert-danger mb-0"><i class="bi bi-x-circle me-1"></i> Lỗi xác thực: ${err.message || err}</div>`;
+    }
+
     if (window.google && google.script) {
       google.script.run
-        .withSuccessHandler(orders => renderOrders(orders, phone, pin))
-        .withFailureHandler(err => {
-          alert("Lỗi xác thực: " + err.message);
-          area.style.display = 'none';
-        })
-        .getEditableOrders(phone);
+        .withSuccessHandler(handleOrdersResult)
+        .withFailureHandler(handleOrdersError)
+        .getUserOrders(phone, pin);
     } else if (SCRIPT_URL) {
-      fetch(`${SCRIPT_URL}?action=getEditableOrders&phone=${encodeURIComponent(phone)}&pin=${encodeURIComponent(pin)}`)
+      fetch(`${SCRIPT_URL}?action=getUserOrders&phone=${encodeURIComponent(phone)}&pin=${encodeURIComponent(pin)}`)
         .then(res => res.json())
         .then(res => {
           if (res.error) throw new Error(res.error);
-          renderOrders(res, phone, pin);
+          handleOrdersResult(res);
         })
         .catch(err => {
-          alert("Lỗi xác thực: " + err.message);
-          area.style.display = 'none';
+          // Fallback qua getEditableOrders nếu Apps Script chưa deploy hàm mới
+          fetch(`${SCRIPT_URL}?action=getEditableOrders&phone=${encodeURIComponent(phone)}&pin=${encodeURIComponent(pin)}`)
+            .then(r => r.json())
+            .then(res => {
+              if (res.error) throw new Error(res.error);
+              handleOrdersResult(res);
+            })
+            .catch(handleOrdersError);
         });
     }
   }
 
-  function renderOrders(orders, phone, pin) {
+  function updateUserStats(orders) {
+    let total = orders.length;
+    let approved = 0;
+    let pending = 0;
+    let other = 0;
+
+    orders.forEach(o => {
+      const st = (o.status || "").toString();
+      if (st.indexOf("Đã duyệt") > -1 || st.indexOf("APPROVED") > -1 || st === "Đã cập nhật") {
+        approved++;
+      } else if (st.indexOf("Pending") > -1 || st.indexOf("Chờ") > -1 || st.indexOf("Xung đột") > -1) {
+        pending++;
+      } else {
+        other++;
+      }
+    });
+
+    document.getElementById('userTotalCount').innerText = total;
+    document.getElementById('userApprovedCount').innerText = approved;
+    document.getElementById('userPendingCount').innerText = pending;
+    document.getElementById('userOtherCount').innerText = other;
+  }
+
+  function filterUserOrders(filterType) {
+    currentActiveFilter = filterType;
+    document.getElementById('btnFilterAll').className = `btn btn-sm btn-outline-secondary ${filterType === 'all' ? 'active' : ''}`;
+    document.getElementById('btnFilterApproved').className = `btn btn-sm btn-outline-success ${filterType === 'approved' ? 'active' : ''}`;
+    document.getElementById('btnFilterPending').className = `btn btn-sm btn-outline-warning text-dark ${filterType === 'pending' ? 'active' : ''}`;
+
+    let filtered = currentFetchedUserOrders;
+    if (filterType === 'approved') {
+      filtered = currentFetchedUserOrders.filter(o => {
+        const st = (o.status || "").toString();
+        return st.indexOf("Đã duyệt") > -1 || st.indexOf("APPROVED") > -1 || st === "Đã cập nhật";
+      });
+    } else if (filterType === 'pending') {
+      filtered = currentFetchedUserOrders.filter(o => {
+        const st = (o.status || "").toString();
+        return st.indexOf("Pending") > -1 || st.indexOf("Chờ") > -1 || st.indexOf("Xung đột") > -1;
+      });
+    }
+
+    const phone = document.getElementById('searchPhone').value.trim();
+    const pin = document.getElementById('searchPin').value.trim();
+    renderUserOrdersList(filtered, phone, pin);
+  }
+
+  function renderUserOrdersList(orders, phone, pin) {
     const list = document.getElementById('orderList');
     list.innerHTML = "";
     document.getElementById('foundCount').innerText = (orders ? orders.length : 0) + " đơn";
 
     if (!orders || orders.length === 0) {
-      list.innerHTML = '<div class="alert alert-info mb-0"><i class="bi bi-info-circle me-1"></i> Không tìm thấy đơn nào còn hiệu lực chỉnh sửa cho nhân sự này.</div>';
+      list.innerHTML = '<div class="alert alert-info mb-0 py-3 text-center"><i class="bi bi-info-circle fs-4 d-block mb-1"></i> Không có đơn nào trong danh mục này.</div>';
       return;
     }
 
     orders.forEach(ord => {
-      const item = document.createElement('div');
-      item.className = "list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3";
-      item.innerHTML = `
-        <div>
-          <div class="fw-bold text-primary fs-6">${ord.orderId}</div>
-          <div class="small"><strong>Khởi hành:</strong> <span class="badge bg-success">${ord.requestDateDisplay || ord.requestDate}</span> - <span class="fw-bold text-dark">${ord.startTime || 'Linh hoạt'}</span></div>
-          <div class="small text-muted text-truncate" style="max-width: 450px;"><strong>Nội dung:</strong> ${ord.content || 'Không ghi'}</div>
+      const st = (ord.status || "Chờ xử lý").toString();
+      let badgeHtml = "";
+      let cardClass = "order-status-card pending";
+
+      if (st.indexOf("Auto Approved") > -1 || st.indexOf("Tina Approved") > -1 || st.indexOf("Đã duyệt") > -1 || st === "Đã cập nhật") {
+        badgeHtml = `<span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>${st}</span>`;
+        cardClass = "order-status-card approved";
+      } else if (st.indexOf("Dời ca chiều") > -1) {
+        badgeHtml = `<span class="badge bg-info text-white"><i class="bi bi-arrow-right-circle-fill me-1"></i>${st}</span>`;
+        cardClass = "order-status-card afternoon";
+      } else if (st.indexOf("Rejected") > -1 || st.indexOf("Từ chối") > -1) {
+        badgeHtml = `<span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i>${st}</span>`;
+        cardClass = "order-status-card rejected";
+      } else {
+        badgeHtml = `<span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>${st}</span>`;
+        cardClass = "order-status-card pending";
+      }
+
+      let editButtonHtml = "";
+      if (ord.canEdit !== false) {
+        editButtonHtml = `
+          <button class="btn btn-warning btn-sm fw-bold px-3 shadow-sm" onclick='openEditForm(${JSON.stringify(ord)}, "${phone}", "${pin}")'>
+            <i class="bi bi-pencil-fill me-1"></i> Sửa Lịch
+          </button>
+        `;
+      } else {
+        editButtonHtml = `<span class="badge bg-light text-muted border py-2 px-2"><i class="bi bi-lock-fill me-1"></i>Đã qua giờ chạy / Đã khóa</span>`;
+      }
+
+      const noteText = (ord.note || "").toString();
+      let tinaFeedback = "";
+      let aiWarning = "";
+
+      if (noteText.indexOf("[TINA DUYỆT]:") > -1) {
+        const parts = noteText.split("[TINA DUYỆT]:");
+        tinaFeedback = parts[1].trim();
+      }
+      if (noteText.indexOf("[AI CẢNH BÁO]:") > -1) {
+        const parts = noteText.split("[AI CẢNH BÁO]:");
+        aiWarning = parts[1].trim();
+      }
+
+      const card = document.createElement('div');
+      card.className = `${cardClass} p-3 mb-3`;
+      card.innerHTML = `
+        <!-- KHUNG THỜI GIAN GIỜ NỔI BẬT ĐẬP VÀO MẮT ĐẦU TIÊN -->
+        <div class="time-strip-header user-time d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="time-pill-hero">
+              <i class="bi bi-alarm-fill text-warning me-1"></i> ${ord.startTime || 'Linh hoạt'}
+            </span>
+            <span class="date-pill-hero">
+              <i class="bi bi-calendar3 text-primary me-1"></i> ${cleanDateDisplay(ord.requestDateDisplay || ord.requestDate)}
+            </span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="fw-bold text-primary font-monospace small bg-white px-2 py-1 rounded border">${ord.orderId}</span>
+            ${badgeHtml}
+          </div>
         </div>
-        <button class="btn btn-warning btn-sm fw-bold px-3" onclick='openEditForm(${JSON.stringify(ord)}, "${phone}", "${pin}")'>
-          <i class="bi bi-pencil-fill me-1"></i> Sửa Lịch
-        </button>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <div class="small"><strong>Lộ trình:</strong> <span class="fw-bold text-success">${ord.startLoc} ➔ ${ord.endLoc}</span></div>
+            <div class="small mt-1"><strong>Phương tiện:</strong> <span class="badge bg-secondary">${ord.vehicle || 'Xe Ranger'}</span> (${ord.duration || '2h-4h'})</div>
+            ${ord.estimatedDuration ? `<div class="small mt-1 text-primary"><strong>Thời gian dự kiến:</strong> <span class="badge bg-light text-primary border">${ord.estimatedDuration}</span></div>` : ''}
+            <div class="small mt-1 text-muted text-truncate" style="max-width: 450px;"><strong>Nội dung / Hàng hóa:</strong> ${ord.cargoDesc || ord.content || 'Không có mô tả'}</div>
+          </div>
+          <div class="col-md-6 border-start-md d-flex flex-column justify-content-between">
+            <div>
+              <div class="small"><strong>Người đăng ký:</strong> <span class="fw-bold">${ord.fullName}</span> (${ord.department})</div>
+              <div class="small mt-1"><strong>Liên hệ bắt đầu:</strong> <span class="text-secondary">${ord.contactStart || ord.phone}</span></div>
+              <div class="small mt-1"><strong>Liên hệ kết thúc:</strong> <span class="text-secondary">${ord.contactEnd || 'Không có'}</span></div>
+            </div>
+            <div class="text-end mt-2">
+              ${editButtonHtml}
+            </div>
+          </div>
+          ${tinaFeedback ? `
+            <div class="col-12 mt-2">
+              <div class="p-2 bg-success bg-opacity-10 text-success rounded border border-success small">
+                <i class="bi bi-chat-quote-fill me-1"></i><strong>Ý kiến chỉ đạo từ Chị Tina:</strong> ${tinaFeedback}
+              </div>
+            </div>
+          ` : ''}
+          ${aiWarning ? `
+            <div class="col-12 mt-1">
+              <div class="p-2 bg-warning bg-opacity-10 text-dark rounded border border-warning small">
+                <i class="bi bi-cpu-fill text-danger me-1"></i><strong>Ghi chú phân tích điều phối:</strong> ${aiWarning}
+              </div>
+            </div>
+          ` : ''}
+        </div>
       `;
-      list.appendChild(item);
+      list.appendChild(card);
     });
   }
 
@@ -812,20 +1352,27 @@
       const card = document.createElement('div');
       card.className = "driver-card p-3 mb-3";
       card.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2 flex-wrap gap-2">
-          <div>
-            <span class="badge bg-success me-2">Lệnh Chạy #${idx + 1}</span>
-            <span class="fw-bold text-primary fs-6">${item.orderId}</span>
-            <span class="ms-2 badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>${item.status}</span>
+        <!-- KHUNG THỜI GIAN GIỜ NỔI BẬT ĐẬP VÀO MẮT ĐẦU TIÊN CHO LÁI XE -->
+        <div class="time-strip-header driver-time d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="time-pill-hero time-pill-green">
+              <i class="bi bi-alarm-fill text-warning me-1"></i> ${item.startTime || 'Linh hoạt'}
+            </span>
+            <span class="date-pill-hero">
+              <i class="bi bi-calendar-check-fill text-success me-1"></i> ${cleanDateDisplay(item.requestDate)}
+            </span>
           </div>
-          <div class="text-danger fw-bold fs-6">
-            <i class="bi bi-clock-fill me-1"></i> ${item.startTime}
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success">Lệnh Chạy #${idx + 1}</span>
+            <span class="font-monospace fw-bold text-primary bg-white px-2 py-1 rounded border">${item.orderId}</span>
+            <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>${item.status}</span>
           </div>
         </div>
         <div class="row g-2">
           <div class="col-md-6">
             <div class="small"><strong>Lộ trình:</strong> <span class="text-success fw-bold">${item.startLoc} ➔ ${item.endLoc}</span></div>
             <div class="small"><strong>Phương tiện:</strong> <span class="badge bg-secondary">${item.vehicle}</span> (${item.duration})</div>
+            ${item.estimatedDuration ? `<div class="small text-primary"><strong>Thời gian dự kiến:</strong> <span class="badge bg-light text-primary border">${item.estimatedDuration}</span></div>` : ''}
             <div class="small"><strong>Hàng hóa:</strong> ${item.cargoDesc || item.content || 'Không có mô tả'}</div>
           </div>
           <div class="col-md-6 border-start-md">
@@ -895,14 +1442,20 @@
       const card = document.createElement('div');
       card.className = `pending-card p-3 mb-3 border ${cardBorder}`;
       card.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2 flex-wrap gap-2">
-          <div>
-            <span class="fw-bold text-primary fs-6">${item.orderId}</span>
-            <span class="ms-2 badge bg-secondary">${item.status}</span>
-            <span class="ms-1">${riskBadge}</span>
+        <!-- KHUNG THỜI GIAN GIỜ NỔI BẬT ĐẬP VÀO MẮT ĐẦU TIÊN CHO TINA DUYỆT -->
+        <div class="time-strip-header tina-time d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="time-pill-hero time-pill-purple">
+              <i class="bi bi-alarm-fill text-warning me-1"></i> ${item.startTime || 'Linh hoạt'}
+            </span>
+            <span class="date-pill-hero">
+              <i class="bi bi-calendar-event-fill text-primary me-1"></i> ${cleanDateDisplay(item.requestDate)}
+            </span>
           </div>
-          <div class="fw-bold text-dark small">
-            Khởi hành: <span class="badge bg-primary">${item.requestDate}</span> lúc <strong>${item.startTime}</strong>
+          <div class="d-flex align-items-center gap-2">
+            <span class="font-monospace fw-bold text-primary bg-white px-2 py-1 rounded border">${item.orderId}</span>
+            <span class="badge bg-secondary">${item.status}</span>
+            ${riskBadge}
           </div>
         </div>
         <div class="row g-2">
@@ -919,21 +1472,26 @@
           <!-- HỘP PHÂN TÍCH XUNG ĐỘT THEO QUY_TAC_DIEU_PHOI_XE_YDS.md -->
           <div class="col-12 mt-2">
             <div class="p-2 bg-light rounded small border">
-              <strong><i class="bi bi-cpu-fill text-primary me-1"></i>Phân tích quy tắc điều phối:</strong> ${item.conflictReason}
+              <div><strong><i class="bi bi-clock-history text-primary me-1"></i>Thời gian thực hiện dự kiến:</strong> <span class="badge bg-secondary">${item.estimatedDuration || item.duration || '2h-4h'}</span></div>
+              <div class="mt-1"><strong><i class="bi bi-cpu-fill text-danger me-1"></i>Phân tích quy tắc điều phối:</strong> ${item.conflictReason}</div>
             </div>
+            ${item.suggestion ? `<div class="p-2 bg-warning bg-opacity-10 text-dark rounded small border border-warning mt-1"><strong><i class="bi bi-lightbulb-fill text-warning me-1"></i>Đề xuất của AI:</strong> ${item.suggestion}</div>` : ''}
           </div>
 
-          <!-- Ô NHẬP Ý KIẾN CHỈ ĐẠO CỦA TINA VÀ 2 NÚT RA QUYẾT ĐỊNH -->
+          <!-- Ô NHẬP Ý KIẾN CHỈ ĐẠO CỦA TINA VÀ CÁC NÚT RA QUYẾT ĐỊNH -->
           <div class="col-12 mt-2 pt-2 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div class="flex-grow-1 me-2">
-              <input type="text" class="form-control form-control-sm border-secondary" id="tinaNote_${item.rowIndex}" placeholder="Ý kiến chỉ đạo của Chị Tina (VD: Đồng ý ghép xe / Thuê ngoài Grab / Đổi giờ)...">
+              <input type="text" class="form-control form-control-sm border-secondary" id="tinaNote_${item.rowIndex}" placeholder="Ý kiến chỉ đạo của Chị Tina (VD: Ghép xe / Dời sang chiều / Thuê ngoài)...">
             </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-danger fw-bold" onclick="decideTinaOrder(${item.rowIndex}, '${item.orderId}', 'REJECT')">
-                <i class="bi bi-x-circle me-1"></i> Bác Bỏ
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-sm btn-info text-white fw-bold" onclick="decideTinaOrder(${item.rowIndex}, '${item.orderId}', 'APPROVE_AFTERNOON')" title="Dời giờ bắt đầu sang 13:30 chiều và phê duyệt ngay">
+                <i class="bi bi-arrow-right-circle-fill me-1"></i> ⚡ Chuyển Ca Chiều & Duyệt
               </button>
               <button class="btn btn-sm btn-success fw-bold px-3" onclick="decideTinaOrder(${item.rowIndex}, '${item.orderId}', 'APPROVE')">
-                <i class="bi bi-check-circle me-1"></i> Phê Duyệt Lệnh
+                <i class="bi bi-check-circle me-1"></i> Duyệt Giữ Ca Sáng
+              </button>
+              <button class="btn btn-sm btn-danger fw-bold" onclick="decideTinaOrder(${item.rowIndex}, '${item.orderId}', 'REJECT')">
+                <i class="bi bi-x-circle me-1"></i> Bác Bỏ
               </button>
             </div>
           </div>
@@ -948,7 +1506,14 @@
     const pin = document.getElementById('tinaAuthPin').value.trim();
     const tinaNote = document.getElementById(`tinaNote_${rowIndex}`).value.trim();
 
-    if (!confirm(`Chị Tina có chắc chắn muốn ${decision === 'APPROVE' ? 'PHÊ DUYỆT' : 'BÁC BỎ'} lệnh ${orderId}?`)) {
+    let confirmMsg = `Chị Tina có chắc chắn muốn PHÊ DUYỆT lệnh ${orderId}?`;
+    if (decision === 'REJECT') {
+      confirmMsg = `Chị Tina có chắc chắn muốn BÁC BỎ lệnh ${orderId}?`;
+    } else if (decision === 'APPROVE_AFTERNOON') {
+      confirmMsg = `Chị Tina có chắc chắn muốn DỜI SANG CA CHIỀU (13:30) VÀ PHÊ DUYỆT lệnh ${orderId}?`;
+    }
+
+    if (!confirm(confirmMsg)) {
       return;
     }
 
