@@ -1,5 +1,5 @@
 name = "web-dieu-phoi-yds"
 compatibility_date = "2026-10-07"
 
-[assets]
-directory = "."
+# Cấu hình assets để Wrangler phục vụ file HTML tĩnh
+assets = { directory = "." }
