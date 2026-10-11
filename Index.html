@@ -430,11 +430,30 @@
               </div>
 
               <div class="col-md-6">
-                <label class="form-label fw-bold">Số điện thoại nhân viên <span class="text-danger">*</span></label>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label class="form-label fw-bold mb-0">Số điện thoại nhân viên <span class="text-danger">*</span></label>
+                  <small class="text-primary fw-bold" role="button" onclick="onQuickSelectEmp('0985456848', 'create')"><i class="bi bi-star-fill text-warning me-1"></i>Tôi là Chị Tina (0985456848)</small>
+                </div>
+                <select class="form-select form-select-sm mb-2 text-primary fw-bold border-primary bg-light" id="quickSelectEmpCreate" onchange="onQuickSelectEmp(this.value, 'create')">
+                  <option value="">-- Chọn nhanh nhân viên YDS (1-Click) --</option>
+                  <option value="0985456848">⭐ Ms.Tina - Hành Chính / CFO (0985456848)</option>
+                  <option value="0335184186">🚗 Mr.Nam - Lái xe / VPO (0335184186)</option>
+                  <option value="0976996676">👑 Ms.Hậu - Tổng Giám Đốc (0976996676)</option>
+                  <option value="0865195665">Ms.Trâm - Hành Chính VPO (0865195665)</option>
+                  <option value="0962194446">Ms.Phương - Kế Toán (0962194446)</option>
+                  <option value="0862428568">Ms.Huyền - Kế Toán (0862428568)</option>
+                  <option value="0862310486">Ms.Loan - Quản lý Event (0862310486)</option>
+                  <option value="0914676229">Mr.Minh Anh - Quản lý Services (0914676229)</option>
+                  <option value="0865765665">Mr.Toàn - Mua Hàng (0865765665)</option>
+                  <option value="0962698597">Ms.Châm - Mua Hàng / ISO (0962698597)</option>
+                  <option value="0337151186">Mr.Đức Anh - Kho Vận / IT (0337151186)</option>
+                  <option value="0862357086">Ms.Mai - Hành Chính / Teabreak (0862357086)</option>
+                </select>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
                   <input type="tel" class="form-control border-primary fw-bold" name="phone" id="createPhone" required 
-                         placeholder="Nhập 10 số (VD: 0985456848)" pattern="[0-9]{10}" oninput="onPhoneInput('create')">
+                         placeholder="Nhập 10 số (VD: 0985456848)" pattern="[0-9]{10}" 
+                         oninput="onPhoneInput('create')" onchange="onPhoneInput('create')" onkeyup="onPhoneInput('create')" onpaste="setTimeout(()=>onPhoneInput('create'),50)" onblur="onPhoneInput('create')">
                 </div>
                 <div id="phoneNoticeCreate" class="small mt-1 text-primary fw-bold"></div>
               </div>
@@ -667,9 +686,13 @@
         <div class="card-body p-4">
           <div class="row align-items-center g-3">
             <div class="col-md-5">
-              <label class="form-label fw-bold small">Số điện thoại nhân viên</label>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label fw-bold small mb-0">Số điện thoại nhân viên</label>
+                <small class="text-primary fw-bold" role="button" onclick="onQuickSelectEmp('0985456848', 'search')"><i class="bi bi-star-fill text-warning me-1"></i>Chị Tina (0985456848)</small>
+              </div>
               <input type="tel" class="form-control border-primary fw-bold" id="searchPhone" 
-                     placeholder="Nhập 10 số (VD: 0985456848)" pattern="[0-9]{10}" oninput="onPhoneInput('search')">
+                     placeholder="Nhập 10 số (VD: 0985456848)" pattern="[0-9]{10}" 
+                     oninput="onPhoneInput('search')" onchange="onPhoneInput('search')" onkeyup="onPhoneInput('search')" onpaste="setTimeout(()=>onPhoneInput('search'),50)" onblur="onPhoneInput('search')">
               <div id="phoneNoticeSearch" class="small mt-1 text-primary fw-bold"></div>
             </div>
             <div class="col-md-4">
@@ -1107,33 +1130,84 @@
     loadDriverSchedule();
   }, 100);
 
+  function cleanPhoneNumber(raw) {
+    if (!raw) return "";
+    let p = raw.toString().trim().replace(/[\s\.\-\(\)]/g, '');
+    if (p.startsWith("+84")) p = "0" + p.substring(3);
+    else if (p.startsWith("84") && p.length > 9) p = "0" + p.substring(2);
+    return p;
+  }
+
+  function onQuickSelectEmp(phone, targetType) {
+    if (!phone) return;
+    const cleanP = cleanPhoneNumber(phone);
+    if (!targetType || targetType === 'create') {
+      const phoneInput = document.getElementById('createPhone');
+      if (phoneInput) {
+        phoneInput.value = cleanP;
+        onPhoneInput('create');
+      }
+      if (cleanP === "0985456848") {
+        const pinInput = document.getElementById('createPin');
+        if (pinInput && !pinInput.value) pinInput.value = "7788";
+      }
+    } else if (targetType === 'search') {
+      const phoneInput = document.getElementById('searchPhone');
+      if (phoneInput) {
+        phoneInput.value = cleanP;
+        onPhoneInput('search');
+      }
+      if (cleanP === "0985456848") {
+        const pinInput = document.getElementById('searchPin');
+        if (pinInput && !pinInput.value) pinInput.value = "7788";
+      }
+    }
+  }
+
   function onPhoneInput(type) {
     if (type === 'create') {
-      const phone = document.getElementById('createPhone').value.trim();
+      const raw = document.getElementById('createPhone').value;
+      const phone = cleanPhoneNumber(raw);
       const notice = document.getElementById('phoneNoticeCreate');
+      const nameInput = document.getElementById('createFullName');
+      const deptInput = document.getElementById('createDept');
+      const quickSelect = document.getElementById('quickSelectEmpCreate');
+
       const emp = LOCAL_EMPLOYEES[phone];
       if (emp) {
-        document.getElementById('createFullName').value = emp.name;
-        document.getElementById('createDept').value = emp.dept;
-        notice.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i> Nhân sự YDS: <strong>${emp.name}</strong> - ${emp.dept}`;
+        if (nameInput) nameInput.value = emp.name;
+        if (deptInput) deptInput.value = emp.dept;
+        if (notice) notice.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i> Nhân sự YDS: <strong>${emp.name}</strong> - ${emp.dept}`;
+        if (quickSelect) quickSelect.value = phone;
+        if (phone === "0985456848") {
+          const pinInput = document.getElementById('createPin');
+          if (pinInput && !pinInput.value) pinInput.value = "7788";
+        }
       } else {
         if (phone.length === 10) {
-          notice.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Số điện thoại không nằm trong danh bạ YDS!</span>`;
+          if (notice) notice.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Số điện thoại không nằm trong danh bạ YDS!</span>`;
         } else {
-          notice.innerHTML = "";
+          if (notice) notice.innerHTML = "";
         }
+        if (nameInput) nameInput.value = "";
+        if (deptInput) deptInput.value = "";
       }
     } else if (type === 'search') {
-      const phone = document.getElementById('searchPhone').value.trim();
+      const raw = document.getElementById('searchPhone').value;
+      const phone = cleanPhoneNumber(raw);
       const notice = document.getElementById('phoneNoticeSearch');
       const emp = LOCAL_EMPLOYEES[phone];
       if (emp) {
-        notice.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i> Nhân sự YDS: <strong>${emp.name}</strong> - ${emp.dept}`;
+        if (notice) notice.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i> Nhân sự YDS: <strong>${emp.name}</strong> - ${emp.dept}`;
+        if (phone === "0985456848") {
+          const pinInput = document.getElementById('searchPin');
+          if (pinInput && !pinInput.value) pinInput.value = "7788";
+        }
       } else {
         if (phone.length === 10) {
-          notice.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Số không có trong danh bạ YDS!</span>`;
+          if (notice) notice.innerHTML = `<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Số không có trong danh bạ YDS!</span>`;
         } else {
-          notice.innerHTML = "";
+          if (notice) notice.innerHTML = "";
         }
       }
     }
