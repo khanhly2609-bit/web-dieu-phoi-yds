@@ -413,17 +413,24 @@
       <div id="justCreatedOrderCard" style="display:none;" class="mb-4"></div>
 
       <div class="card card-custom">
-        <div class="card-header-custom d-flex justify-content-between align-items-center">
-          <span><i class="bi bi-pencil-square me-2"></i>Thông tin đăng ký lịch xe / hành chính</span>
-          <span class="badge bg-danger text-white small">* Bắt buộc SĐT & Mã PIN</span>
+        <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <span><i class="bi bi-pencil-square me-2"></i>Đăng Ký Đặt Lịch Xe & Hành Chính (Chuẩn Hóa AI)</span>
+          <span class="badge bg-primary text-white"><i class="bi bi-cpu me-1"></i>Dữ liệu cấu trúc cho AI đối soát 87 Quy tắc</span>
         </div>
         <div class="card-body p-4">
           <form id="formCreateOrder" onsubmit="handleCreateOrder(event)">
             <div class="row g-3">
               
-              <!-- NHẬP SỐ ĐIỆN THOẠI TRỰC TIẾP -->
+              <!-- KHỐI 1: XÁC THỰC NHÂN SỰ -->
+              <div class="col-12">
+                <div class="p-2 bg-light rounded border fw-bold text-secondary small d-flex align-items-center justify-content-between">
+                  <span><i class="bi bi-person-badge-fill text-primary me-2"></i>1. XÁC THỰC NHÂN SỰ YDS (BẮT BUỘC SĐT & MÃ PIN)</span>
+                  <span class="badge bg-danger text-white">Khóa danh bạ nội bộ</span>
+                </div>
+              </div>
+
               <div class="col-md-6">
-                <label class="form-label fw-bold">Nhập Số điện thoại nhân viên <span class="text-danger">*</span></label>
+                <label class="form-label fw-bold">Số điện thoại nhân viên <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
                   <input type="tel" class="form-control border-primary fw-bold" name="phone" id="createPhone" required 
@@ -432,93 +439,216 @@
                 <div id="phoneNoticeCreate" class="small mt-1 text-primary fw-bold"></div>
               </div>
 
-              <!-- MÃ PIN BẮT BUỘC -->
               <div class="col-md-6">
                 <label class="form-label fw-bold text-danger"><i class="bi bi-key-fill me-1"></i>Mã PIN xác thực (4 số) <span class="text-danger">*</span></label>
-                <input type="password" class="form-control border-danger fw-bold" name="pin" id="createPin" required 
-                       placeholder="Nhập 4 số PIN được cấp..." maxlength="4" pattern="[0-9]{4}">
+                <div class="input-group">
+                  <input type="password" class="form-control border-danger fw-bold" name="pin" id="createPin" required 
+                         placeholder="Nhập 4 số PIN được cấp..." maxlength="4" pattern="[0-9]{4}">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePinVisibility('createPin')" title="Ẩn/Hiện PIN">
+                    <i class="bi bi-eye" id="createPin_eye"></i>
+                  </button>
+                </div>
                 <div class="form-text text-danger small">* Trùng khớp SĐT và Mã PIN mới được tạo lịch.</div>
               </div>
 
-              <!-- HỌ TÊN VÀ PHÒNG BAN -->
               <div class="col-md-6">
                 <label class="form-label fw-bold">Họ và tên nhân sự <span class="text-danger">*</span></label>
-                <input type="text" class="form-control bg-light fw-bold" name="fullName" id="createFullName" required placeholder="Tự động điền khi nhập đúng SĐT...">
+                <input type="text" class="form-control bg-light fw-bold" name="fullName" id="createFullName" required placeholder="Tự động điền khi nhập đúng SĐT..." readonly>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label fw-bold">Phòng ban <span class="text-danger">*</span></label>
-                <input type="text" class="form-control bg-light fw-bold" name="department" id="createDept" required placeholder="Tự động điền theo SĐT...">
+                <input type="text" class="form-control bg-light fw-bold" name="department" id="createDept" required placeholder="Tự động điền theo SĐT..." readonly>
               </div>
 
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Loại yêu cầu <span class="text-danger">*</span></label>
-                <select class="form-select" name="requestType" required>
-                  <option value="Giao Nhan Hang Hoa">Giao nhận hàng hóa</option>
-                  <option value="Dua Don Nhan Su">Đưa đón nhân sự</option>
-                  <option value="Yeu Cau Nhan Su Ho Tro">Yêu cầu nhân sự hỗ trợ</option>
-                  <option value="Khac">Khác</option>
-                </select>
+              <!-- KHỐI 2: KẾ HOẠCH THỜI GIAN & KHUNG CA (CHO AI XẾP LỊCH) -->
+              <div class="col-12 mt-4">
+                <div class="p-2 bg-light rounded border fw-bold text-primary small d-flex align-items-center justify-content-between">
+                  <span><i class="bi bi-clock-history text-primary me-2"></i>2. KẾ HOẠCH THỜI GIAN & KHUNG CA (CHO AI ĐỐI SOÁT XUNG ĐỘT)</span>
+                  <span class="badge bg-primary text-white">Quỹ thời gian ca 4h (RULE_33)</span>
+                </div>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label class="form-label fw-bold">Ngày khởi hành / Thực hiện <span class="text-danger">*</span></label>
-                <input type="date" class="form-control border-primary fw-bold" name="requestDate" id="createReqDate" required>
+                <input type="date" class="form-control border-primary fw-bold" name="requestDate" id="createReqDate" required onchange="checkVehicleRuleAlert()">
                 <div class="form-text text-muted small">Hệ thống chặn không cho đặt lịch lùi về quá khứ.</div>
               </div>
 
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Thời gian bắt đầu</label>
-                <select class="form-select" name="startTime">
-                  <option value="Linh hoạt trong buổi sáng">Linh hoạt trong buổi sáng</option>
-                  <option value="Linh hoạt trong buổi chiều">Linh hoạt trong buổi chiều</option>
-                  <option value="Đúng giờ: 08:00">Đúng giờ: 08:00</option>
-                  <option value="Đúng giờ: 13:30">Đúng giờ: 13:30</option>
-                  <option value="Đúng giờ: 17:00">Đúng giờ: 17:00</option>
+              <div class="col-md-5">
+                <label class="form-label fw-bold">Khung ca & Tính linh hoạt thời gian <span class="text-danger">*</span></label>
+                <select class="form-select border-primary fw-bold" name="startTime" id="createStartTime">
+                  <optgroup label="☀️ Ca Sáng (08:00 - 12:00)">
+                    <option value="Ca Sáng: Linh hoạt (08:00 - 12:00)" selected>Linh hoạt ca sáng (08:00 - 12:00) ⭐ AI tối ưu ghép chuyến</option>
+                    <option value="Ca Sáng: Cố định đúng 08:00">Cố định đúng 08:00 (Bắt buộc giờ mốc, không dời ca)</option>
+                    <option value="Ca Sáng: Cố định đúng 09:00">Cố định đúng 09:00 (Bắt buộc giờ mốc)</option>
+                    <option value="Ca Sáng: Cố định đúng 10:00">Cố định đúng 10:00 (Bắt buộc giờ mốc)</option>
+                  </optgroup>
+                  <optgroup label="🌤️ Ca Chiều (13:30 - 17:30)">
+                    <option value="Ca Chiều: Linh hoạt (13:30 - 17:30)">Linh hoạt ca chiều (13:30 - 17:30) ⭐ AI tối ưu ghép chuyến</option>
+                    <option value="Ca Chiều: Cố định đúng 13:30">Cố định đúng 13:30 (Khởi hành đầu giờ chiều)</option>
+                    <option value="Ca Chiều: Cố định đúng 14:30">Cố định đúng 14:30 (Bắt buộc giờ mốc)</option>
+                    <option value="Ca Chiều: Cố định đúng 15:30">Cố định đúng 15:30 (Bắt buộc giờ mốc)</option>
+                  </optgroup>
+                  <optgroup label="🚗 Chuyến đặc thù">
+                    <option value="Cả ngày (08:00 - 17:00)">Cả ngày (08:00 - 17:00) ⚠️ Khóa trọn ca xe (Đường dài)</option>
+                    <option value="Ngoài giờ sau 17:00">Ngoài giờ sau 17:00 ⚠️ Cần Chị Tina duyệt Freeze Window</option>
+                  </optgroup>
+                </select>
+                <div class="form-text text-muted small">Khuyến nghị chọn "Linh hoạt" để AI tự động ghép chặng tối ưu.</div>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label fw-bold">Thời lượng ước tính <span class="text-danger">*</span></label>
+                <select class="form-select fw-bold" name="duration" id="createDuration">
+                  <option value="Nhanh: dưới 2h" selected>Nhanh: Dưới 2h (Nội tỉnh/chặng ngắn)</option>
+                  <option value="Trung bình: từ 2h-4h">Trung bình: 2h - 4h (Tuyến VPO ↔ HNO)</option>
+                  <option value="Dài: trên 4h">Dài: Trên 4h (Liên tỉnh Ninh Bình, Hà Nam...)</option>
+                </select>
+                <div class="form-text text-muted small">AI cộng thêm 15-45p tác nghiệp tại điểm đến.</div>
+              </div>
+
+              <!-- KHỐI 3: LỘ TRÌNH & TUYẾN ĐƯỜNG (CHO AI TÍNH CỰ LY) -->
+              <div class="col-12 mt-4">
+                <div class="p-2 bg-light rounded border fw-bold text-success small d-flex align-items-center justify-content-between">
+                  <span><i class="bi bi-geo-alt-fill text-success me-2"></i>3. LỘ TRÌNH & TUYẾN ĐƯỜNG (CHO AI TÍNH TOÁN CỰ LY & GHÉP CHUYẾN)</span>
+                  <span class="badge bg-success text-white">Hub chuẩn VPO / HNO / Khách hàng</span>
+                </div>
+              </div>
+
+              <div class="col-md-5">
+                <label class="form-label fw-bold">Điểm xuất phát (Điểm đi) <span class="text-danger">*</span></label>
+                <select class="form-select border-success fw-bold" id="startLocPreset" onchange="onPresetLocChange('start')">
+                  <option value="VPO" selected>VPO - Văn phòng Vĩnh Phúc (Phúc Yên)</option>
+                  <option value="HNO">HNO - Văn phòng Hà Nội (Nam Cường, Cổ Nhuế)</option>
+                  <option value="HVN">HVN - Honda Việt Nam (Phúc Yên, Vĩnh Phúc)</option>
+                  <option value="HNM">HNM - Honda Hà Nam (KCN Đồng Văn II)</option>
+                  <option value="PVN">PVN - Piaggio Việt Nam (Bình Xuyên, Vĩnh Phúc)</option>
+                  <option value="Ninh Bình">Ninh Bình (KCN Gián Khẩu / TP Ninh Bình)</option>
+                  <option value="Hải Phòng">Hải Phòng / Cảng Đình Vũ</option>
+                  <option value="Quảng Ninh">Quảng Ninh</option>
+                  <option value="CUSTOM">Khác (Tự nhập địa chỉ bên dưới...)</option>
+                </select>
+                <input type="text" class="form-control form-control-sm mt-1" name="startLoc" id="startLoc" value="VPO" placeholder="Ghi rõ địa chỉ cụ thể nếu cần..." required>
+              </div>
+
+              <div class="col-md-2 d-flex align-items-center justify-content-center pt-md-4">
+                <button type="button" class="btn btn-outline-secondary btn-sm w-100 toolbar-single-line-btn" onclick="swapLocations()" title="Đổi chiều Điểm đi và Điểm đến">
+                  <i class="bi bi-arrow-left-right me-1"></i>Đổi chiều
+                </button>
+              </div>
+
+              <div class="col-md-5">
+                <label class="form-label fw-bold">Điểm kết thúc (Điểm đến) <span class="text-danger">*</span></label>
+                <select class="form-select border-success fw-bold" id="endLocPreset" onchange="onPresetLocChange('end')">
+                  <option value="HNO" selected>HNO - Văn phòng Hà Nội (Nam Cường, Cổ Nhuế)</option>
+                  <option value="VPO">VPO - Văn phòng Vĩnh Phúc (Phúc Yên)</option>
+                  <option value="HVN">HVN - Honda Việt Nam (Phúc Yên, Vĩnh Phúc)</option>
+                  <option value="HNM">HNM - Honda Hà Nam (KCN Đồng Văn II)</option>
+                  <option value="PVN">PVN - Piaggio Việt Nam (Bình Xuyên, Vĩnh Phúc)</option>
+                  <option value="Ninh Bình">Ninh Bình (KCN Gián Khẩu / TP Ninh Bình)</option>
+                  <option value="Hải Phòng">Hải Phòng / Cảng Đình Vũ</option>
+                  <option value="Quảng Ninh">Quảng Ninh</option>
+                  <option value="CUSTOM">Khác (Tự nhập địa chỉ bên dưới...)</option>
+                </select>
+                <input type="text" class="form-control form-control-sm mt-1" name="endLoc" id="endLoc" value="HNO" placeholder="Ghi rõ địa chỉ cụ thể nếu cần..." required>
+              </div>
+
+              <!-- KHỐI 4: TẢI TRỌNG, HÀNG HÓA & PHƯƠNG TIỆN (CHO AI ĐỐI SOÁT TẢI RANGER & MPV7) -->
+              <div class="col-12 mt-4">
+                <div class="p-2 bg-light rounded border fw-bold text-dark small d-flex align-items-center justify-content-between">
+                  <span><i class="bi bi-truck text-warning me-2"></i>4. PHƯƠNG TIỆN, TẢI TRỌNG & TÍNH CHẤT HÀNG HÓA (CHO AI ĐỐI SOÁT TẢI XE)</span>
+                  <span class="badge bg-warning text-dark">Ranger &le;500kg (RULE_18) | MPV7 &ge;16/tháng (RULE_05)</span>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Loại yêu cầu công tác <span class="text-danger">*</span></label>
+                <select class="form-select" name="requestType" required>
+                  <option value="Giao Nhan Hang Hoa" selected>📦 Giao nhận hàng hóa / Vật tư</option>
+                  <option value="Dua Don Nhan Su">👥 Đưa đón nhân sự / Họp đối tác</option>
+                  <option value="Yeu Cau Nhan Su Ho Tro">🛠️ Hiện trường / Setup sự kiện</option>
+                  <option value="Chuyen Phat Ho So">📄 Chuyển phát công văn / Hồ sơ kế toán</option>
+                  <option value="Khac">⚡ Yêu cầu khác</option>
+                </select>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Phương tiện đề xuất <span class="text-danger">*</span></label>
+                <select class="form-select fw-bold" name="vehicle" id="createVehicle" onchange="checkVehicleRuleAlert()" required>
+                  <option value="Xe Ranger" selected>Xe Ranger (Bán tải 29H-634.71 - Tối đa 4 người & &le;500kg)</option>
+                  <option value="Xe VF MPV7">Xe VF MPV7 (Điện 7 chỗ 29K-158.32 - Chỉ dùng ngày 16-cuối tháng)</option>
+                  <option value="Có dùng xe (linh hoạt)">AI tự động chọn xe tối ưu (Khuyến nghị)</option>
+                  <option value="Xe thuê ngoài">Xe thuê ngoài (Grab/Taxi/Hợp đồng - Cần Tina duyệt)</option>
+                  <option value="Không sử dụng xe ô tô">Không sử dụng xe ô tô (Đi bộ / Tự túc)</option>
+                </select>
+                <div id="vehicleNotice" class="small mt-1 text-danger fw-bold" style="display:none;"></div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Mức độ ưu tiên chuyến đi</label>
+                <select class="form-select" name="priority" id="createPriority">
+                  <option value="Tiêu chuẩn" selected>Tiêu chuẩn (Theo kế hoạch công tác bình thường)</option>
+                  <option value="Ưu tiên cao">Ưu tiên cao (Khách VIP / Ban Giám Đốc / Sự kiện)</option>
+                  <option value="Khẩn cấp">Khẩn cấp (Sự cố kỹ thuật / Phát sinh gấp)</option>
                 </select>
               </div>
 
               <div class="col-md-6">
-                <label class="form-label fw-bold">Phương tiện đề xuất</label>
-                <select class="form-select" name="vehicle">
-                  <option value="Xe Ranger">Xe Ranger (Bán tải)</option>
-                  <option value="Có dùng xe (linh hoạt)">Có dùng xe (Linh hoạt)</option>
-                  <option value="Không sử dụng xe ô tô">Không sử dụng xe ô tô</option>
+                <label class="form-label fw-bold">Tải trọng & Quy cách hàng hóa <span class="text-danger">*</span></label>
+                <select class="form-select border-warning fw-bold" name="cargoWeight" id="createCargoWeight">
+                  <option value="Không chở hàng" selected>Không chở hàng (Chỉ chở người / Đi công tác)</option>
+                  <option value="Hàng nhẹ: Dưới 50kg">Hàng nhẹ: Dưới 50kg (Hồ sơ, bưu phẩm, mẫu thử, teabreak)</option>
+                  <option value="Hàng vừa: 50kg - 200kg">Hàng vừa: 50kg - 200kg (Thùng carton, vật tư sự kiện)</option>
+                  <option value="Hàng nặng: 200kg - 500kg">Hàng nặng: 200kg - 500kg (Thiết bị, phụ tùng - vừa thùng Ranger)</option>
+                  <option value="Hàng cồng kềnh / Quá tải >500kg">Hàng cồng kềnh / Quá tải &gt;500kg ⚠️ Cần xe tải hoặc Tina duyệt (RULE_18)</option>
                 </select>
               </div>
 
               <div class="col-md-6">
-                <label class="form-label fw-bold">Điểm xuất phát <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="startLoc" value="VPO" required>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Điểm kết thúc <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" name="endLoc" value="HNO" required>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Thời gian ước tính hoàn thành</label>
-                <select class="form-select" name="duration">
-                  <option value="Nhanh: dưới 2h">Nhanh: dưới 2h</option>
-                  <option value="Trung bình: từ 2h-4h">Trung bình: từ 2h - 4h</option>
-                  <option value="Dài: trên 4h">Dài: trên 4h</option>
+                <label class="form-label fw-bold">Số lượng nhân sự đi cùng xe <span class="text-danger">*</span></label>
+                <select class="form-select fw-bold" name="passengers" id="createPassengers">
+                  <option value="1 người" selected>1 người (Chỉ người tạo order đi cùng lái xe Nam)</option>
+                  <option value="2 - 4 người">2 - 4 người (Vừa sức chứa 4 chỗ phụ xe Ranger)</option>
+                  <option value="5 - 7 người">5 - 7 người ⚠️ Quá chỗ Ranger (Cần xe VF MPV7 7 chỗ hoặc xe ngoài)</option>
                 </select>
-              </div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-bold">Ghi chú bổ sung</label>
-                <input type="text" class="form-control" name="note" placeholder="Thông tin liên hệ phụ trách điểm đến, yêu cầu gấp...">
               </div>
 
               <div class="col-12">
-                <label class="form-label fw-bold">Nội dung công việc / Mô tả hàng hóa</label>
-                <textarea class="form-control" name="content" rows="2" placeholder="Chi tiết số lượng kiện hàng, trọng tải hoặc ghi chú nhân sự đi cùng..."></textarea>
+                <label class="form-label fw-bold">Nội dung công việc & Mô tả chi tiết hàng hóa / Nhân sự</label>
+                <textarea class="form-control" name="content" rows="2" placeholder="Ghi rõ tên hàng hóa, số lượng kiện, kích thước nếu có hoặc danh sách nhân sự đi cùng..."></textarea>
               </div>
+
+              <!-- KHỐI 5: ĐẦU MỐI LIÊN HỆ GIAO NHẬN (CHO LÁI XE NAM) -->
+              <div class="col-12 mt-4">
+                <div class="p-2 bg-light rounded border fw-bold text-secondary small d-flex align-items-center justify-content-between">
+                  <span><i class="bi bi-telephone-outbound text-secondary me-2"></i>5. ĐẦU MỐI LIÊN HỆ GIAO NHẬN (CHO BÁC TÀI NAM LIÊN HỆ KHI ĐẾN NƠI)</span>
+                  <span class="badge bg-secondary text-white">Thông tin tác nghiệp hiện trường</span>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Đầu mối phụ trách tại Điểm đi (Giao hàng / Điểm đón)</label>
+                <input type="text" class="form-control" name="contactStart" placeholder="Họ tên & SĐT người giao (VD: Ms.Trâm 0865195665)">
+                <div class="form-text text-muted small">Để trống sẽ tự động lấy thông tin người đặt order.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Đầu mối phụ trách tại Điểm đến (Nhận hàng / Điểm trả)</label>
+                <input type="text" class="form-control" name="contactEnd" placeholder="Họ tên & SĐT người nhận (VD: Mr.Toàn 0865765665)">
+                <div class="form-text text-muted small">Bắt buộc nếu giao hàng cho khách hàng hoặc nhận hàng ngoài kho.</div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-bold">Ghi chú tác nghiệp đặc biệt (Lưu ý cho Lái xe & Quản trị)</label>
+                <input type="text" class="form-control" name="note" placeholder="Yêu cầu giờ hẹn đối tác, lưu ý giấy tờ hóa đơn GTGT, bốc xếp nặng, phụ cấp công tác phí...">
+              </div>
+
             </div>
 
-            <div class="mt-4 pt-2 border-top text-end">
-              <button type="submit" class="btn btn-primary px-4 fw-bold" id="btnSubmitCreate">
+            <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <span class="text-muted small"><i class="bi bi-shield-check text-success me-1"></i>Đơn hợp lệ sẽ được AI tự động duyệt (Auto Approved) trong vòng 3 giây.</span>
+              <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btnSubmitCreate">
                 <i class="bi bi-send-fill me-1"></i> Gửi Yêu Cầu Đặt Lịch
               </button>
             </div>
@@ -1010,6 +1140,67 @@
   }
 
   // 1. TẠO ĐƠN MỚI
+  function onPresetLocChange(type) {
+    if (type === 'start') {
+      const preset = document.getElementById('startLocPreset').value;
+      const input = document.getElementById('startLoc');
+      if (preset === 'CUSTOM') {
+        input.value = '';
+        input.focus();
+      } else {
+        input.value = preset;
+      }
+    } else {
+      const preset = document.getElementById('endLocPreset').value;
+      const input = document.getElementById('endLoc');
+      if (preset === 'CUSTOM') {
+        input.value = '';
+        input.focus();
+      } else {
+        input.value = preset;
+      }
+    }
+  }
+
+  function swapLocations() {
+    const startInput = document.getElementById('startLoc');
+    const endInput = document.getElementById('endLoc');
+    const startPreset = document.getElementById('startLocPreset');
+    const endPreset = document.getElementById('endLocPreset');
+
+    const tempVal = startInput.value;
+    startInput.value = endInput.value;
+    endInput.value = tempVal;
+
+    const tempPreset = startPreset.value;
+    startPreset.value = endPreset.value;
+    endPreset.value = tempPreset;
+  }
+
+  function checkVehicleRuleAlert() {
+    const v = document.getElementById('createVehicle').value;
+    const dateVal = document.getElementById('createReqDate').value;
+    const notice = document.getElementById('vehicleNotice');
+    if (!notice) return;
+
+    if (v.indexOf('MPV') > -1) {
+      let day = 0;
+      if (dateVal) {
+        day = parseInt(dateVal.split('-')[2]);
+      } else {
+        day = new Date().getDate();
+      }
+      if (day < 16) {
+        notice.style.display = 'block';
+        notice.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-1"></i><strong>Cảnh báo AI (RULE_05):</strong> Xe VF MPV7 chỉ dùng từ ngày 16 đến cuối tháng (ngày 1-15 thuộc VNG). Đơn này sẽ chuyển sang Chị Tina duyệt ngoại lệ.`;
+      } else {
+        notice.style.display = 'none';
+      }
+    } else {
+      notice.style.display = 'none';
+    }
+  }
+
   function handleCreateOrder(e) {
     e.preventDefault();
     const btn = document.getElementById('btnSubmitCreate');
@@ -1020,6 +1211,16 @@
       alert("Vui lòng nhập đúng mã PIN gồm 4 chữ số!");
       return;
     }
+
+    // Tự động tổng hợp thông số hàng hóa, tải trọng và số người cho AI
+    const cargoWeight = formData.cargoWeight || "Không chở hàng";
+    const passengers = formData.passengers || "1 người";
+    formData.cargoDesc = `${cargoWeight} | ${passengers}`.trim();
+
+    // Tự động gắn nhãn mức độ ưu tiên vào ghi chú
+    const priority = formData.priority || "Tiêu chuẩn";
+    const userNote = formData.note || "";
+    formData.note = `[${priority}] ${userNote}`.trim();
 
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xác thực & phân tích điều phối...';
@@ -1038,9 +1239,14 @@
       // Hiển thị Thẻ Theo Dõi Tình Trạng Đơn Vừa Đặt
       renderJustCreatedOrder(res, formData);
 
-      // Reset form nhưng giữ ngày hôm nay
+      // Reset form nhưng giữ ngày hôm nay và các hub mặc định
       form.reset();
       document.getElementById('createReqDate').value = todayStr;
+      document.getElementById('startLoc').value = "VPO";
+      document.getElementById('endLoc').value = "HNO";
+      document.getElementById('startLocPreset').value = "VPO";
+      document.getElementById('endLocPreset').value = "HNO";
+      document.getElementById('vehicleNotice').style.display = "none";
       document.getElementById('phoneNoticeCreate').innerHTML = "";
     }
 
